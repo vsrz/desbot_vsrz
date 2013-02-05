@@ -1,0 +1,160 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{E4F31027-A583-4F78-B42F-E7ECCE45AFFE}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>desBot</RootNamespace>
+    <AssemblyName>Bot</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'QNET|AnyCPU' ">
+    <OutputPath>bin\QNET\</OutputPath>
+    <DefineConstants>TRACE;QNETBOT</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>desBot.Program</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'JTV|AnyCPU' ">
+    <OutputPath>bin\JTV\</OutputPath>
+    <DefineConstants>TRACE;JTVBOT</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>false</SignManifests>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Alice.cs" />
+    <Compile Include="BanSystem.cs" />
+    <Compile Include="Command.cs" />
+    <Compile Include="CommandGroup.cs" />
+    <Compile Include="Commands\BanList.cs" />
+    <Compile Include="Commands\Clear.cs" />
+    <Compile Include="Commands\Elevate.cs" />
+    <Compile Include="Commands\Grep.cs" />
+    <Compile Include="Commands\Limit.cs" />
+    <Compile Include="Commands\Prop.cs" />
+    <Compile Include="Commands\Purge.cs" />
+    <Compile Include="Commands\Rank.cs" />
+    <Compile Include="Commands\Restart.cs" />
+    <Compile Include="Commands\SlowMode.cs" />
+    <Compile Include="Commands\Spam.cs" />
+    <Compile Include="Commands\Time.cs" />
+    <Compile Include="Commands\Token.cs" />
+    <Compile Include="Commands\Ban.cs" />
+    <Compile Include="Commands\Help.cs" />
+    <Compile Include="Commands\Quote.cs" />
+    <Compile Include="Commands\Random.cs" />
+    <Compile Include="Commands\Say.cs" />
+    <Compile Include="Commands\Trigger.cs" />
+    <Compile Include="Commands\Twitter.cs" />
+    <Compile Include="Commands\Unban.cs" />
+    <Compile Include="Commands\Viewers.cs" />
+    <Compile Include="Commands\Warn.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Commands\Whoami.cs" />
+    <Compile Include="Irc.cs" />
+    <Compile Include="JTV.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="QNet.cs" />
+    <Compile Include="Commands\Terminate.cs" />
+    <Compile Include="Watcher.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4 Client Profile %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{E0446370-458C-4D21-A3C7-8B57BA717C61}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Irc\Irc.csproj">
+      <Project>{01F5A252-BE04-4690-89F4-0FFA581053D4}</Project>
+      <Name>Irc</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Net" />
+    <Reference Include="System.XML" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy "$(ProjectDir)$(OutDir)$(TargetFileName)" "$(SolutionDir)Bin\$(ConfigurationName)" /Y /I
+xcopy "$(ProjectDir)$(OutDir)*.dll" "$(SolutionDir)Bin\$(ConfigurationName)" /Y
+move /Y "$(SolutionDir)Bin\$(ConfigurationName)\$(TargetFileName)" "$(SolutionDir)Bin\$(ConfigurationName)\$(TargetName)_$(ConfigurationName).exe"</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
