@@ -63,6 +63,7 @@
     <Compile Include="BanSystem.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="CommandGroup.cs" />
+    <Compile Include="Commands\Ad.cs" />
     <Compile Include="Commands\BanList.cs" />
     <Compile Include="Commands\Clear.cs" />
     <Compile Include="Commands\Elevate.cs" />
@@ -137,6 +138,7 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Data" />
     <Reference Include="System.Data.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>

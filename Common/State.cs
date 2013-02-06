@@ -166,5 +166,22 @@ namespace desBot
         /// The account to repeat tweets from
         /// </summary>
         public static DynamicProperty<string, string> TwitterAccount = new DynamicProperty<string, string>("TwitterAccount", String.Empty);
+
+        /// <summary>
+        /// Interval to spam ad text, in minutes
+        /// </summary>
+        public static DynamicProperty<int, int> AdInterval = new DynamicProperty<int, int>("AdInterval", 15);
+
+        /// <summary>
+        /// Whether ad spamming is enabled
+        /// </summary>
+        public static DynamicProperty<bool, bool> AdEnabled = new DynamicProperty<bool, bool>("AdEnabled", false);
+
+        /// <summary>
+        /// Advert text
+        /// </summary>
+        public static DynamicProperty<string, string> AdText = new DynamicProperty<string, string>("AdText", String.Empty);
+
+
     }
 }

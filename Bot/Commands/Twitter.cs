@@ -317,7 +317,7 @@ namespace desBot
                 {
                     SetKey(message, words[0], words[1]);
                 }
-                else throw new Exception("Syntaxis error, expects: !twitter [<key> [<value>]]");
+                else throw new Exception("Syntax error, expects: !twitter [<key> [<value>]]");
             }
         }
     }

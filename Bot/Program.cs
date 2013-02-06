@@ -12,15 +12,9 @@ namespace desBot
     /// </summary>
     static class Program
     {
-#if JTVBOT
         //flag set on JTV
         public const bool IsJTV = true;
         public static bool IsBuggyTwitch = false;
-
-#elif QNETBOT
-        //flag set on JTV
-        public const bool IsJTV = false;
-#endif
 
         //configuration file name
         const string ConfigFileName = "Settings.xml";
@@ -39,6 +33,7 @@ namespace desBot
         static int quoteinterval;
         static Timer quotetimer;
         static DateTime quotelast = DateTime.UtcNow;
+        
         static void SetQuoteTimer()
         {
             if (quotetimer != null) quotetimer.Dispose();
@@ -50,6 +45,7 @@ namespace desBot
             }
             else quotetimer = null;
         }
+
         static void OnQuoteTimer(object ignored)
         {
             Program.Log("Triggering auto-quote");
@@ -62,12 +58,14 @@ namespace desBot
             SetQuoteTimer();
         }
 
+
         //save timer
         static Timer savetimer;
         static void OnSaveTimer(object ignored)
         {
             Alice.Tick(null);
             TwitterCommand.CheckRecent();
+            AdCommand.CheckAd();
             Save();
         }
 
@@ -80,13 +78,8 @@ namespace desBot
             {
                 Stats stats = new Stats();
                 stats.Irc = Irc.State;
-#if JTVBOT
                 stats.Qlevel = QAuthLevel.None;
                 stats.Qquery = "n/a";
-#elif QNETBOT
-                stats.Qlevel = Irc.QLevel;
-                stats.Qquery = Irc.Queue != null ? Irc.Queue.State : "";
-#endif
                 stats.Nick = Irc.Nickname;
                 stats.Channel = Irc.Channel;
                 Process process = Process.GetCurrentProcess();
