@@ -98,6 +98,7 @@ namespace desBot
                 case KeyText:
                     {                        
                         State.AdText.Value = value;
+                        msg.ReplyAuto("Advertisement has been set.");
                     }
                     break;
                 default:
