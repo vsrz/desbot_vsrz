@@ -71,6 +71,11 @@ namespace desBot
         public bool TwitterEnabled = false;
         public string TwitterAccount = string.Empty;
 
+        // Advertisements
+        public int AdInterval = 15;
+        public bool AdEnabled = true;
+        public string AdText = string.Empty;
+
     }
 
     /// <summary>

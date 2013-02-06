@@ -25,7 +25,7 @@ namespace desBot
 
         public override string GetHelpText(PrivilegeLevel current, string more)
         {
-            return " [<key> [<value]]: If empty, show current advertisement. Keys are interval, enabled, and text.";
+            return " [<key> [<value>]]: If empty, show current advertisement. Keys are interval, enabled, and text.";
         }
 
         //keys
