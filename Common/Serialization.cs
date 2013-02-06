@@ -238,6 +238,11 @@ namespace desBot
                 State.TwitterEnabled.Value = result.TwitterEnabled;
                 State.TwitterAccount.Value = result.TwitterAccount;
 
+                // Advertising
+                State.AdInterval.Value = result.AdInterval;
+                State.AdEnabled.Value = result.AdEnabled;
+                State.AdText.Value = result.AdText;
+
                 //success
                 return "Applied settings: " + result.UserList.Count.ToString() + " users, " + result.BanList.Count.ToString() + " bans, " + result.AccountList.Count.ToString() + " accounts, " + result.Quotes.Count.ToString() + " quotes, " + result.Triggers.Count.ToString() + " triggers";
             }
@@ -324,6 +329,11 @@ namespace desBot
                 settings.TwitterInterval = State.TwitterInterval.Value;
                 settings.TwitterEnabled = State.TwitterEnabled.Value;
                 settings.TwitterAccount = State.TwitterAccount.Value;
+
+                // Advertising
+                settings.AdInterval = State.AdInterval.Value;
+                settings.AdText = State.AdText.Value;
+                settings.AdEnabled = State.AdEnabled.Value;
 
                 //done
                 return settings;
