@@ -281,7 +281,7 @@ namespace desBot
                             //trigger alice
                             Program.Log("ALICE input: " + rewritten);
                             string result = Alice.Process(message.From, rewritten, message.Level);
-                            if (result.Length > 0 && result.Length < 100)
+                            if (result.Length > 0 && result.Length < 100 && !result.StartsWith("<br",true,System.Globalization.CultureInfo.CurrentCulture))
                             {
                                 message.ReplyAuto(result);
                             }

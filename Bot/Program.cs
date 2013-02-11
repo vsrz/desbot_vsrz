@@ -64,8 +64,11 @@ namespace desBot
         static void OnSaveTimer(object ignored)
         {
             Alice.Tick(null);
-            TwitterCommand.CheckRecent();
-            AdCommand.CheckAd();
+            if (stream_is_live)
+            {
+                TwitterCommand.CheckRecent();
+                AdCommand.CheckAd();
+            }
             Save();
         }
 
@@ -187,6 +190,7 @@ namespace desBot
         /// <summary>
         /// Update topic if stream changes live status or title
         /// </summary>
+        static bool stream_is_live = false;
         static int prev_live = 0;
         static string prev_title = null;
         static int max_viewers = 0;
@@ -198,35 +202,21 @@ namespace desBot
                 if (Irc.State == IrcState.Ready)
                 {
                     int new_live = live ? 2 : 1;
-#if QNETBOT
-                    bool condition = true;
-#elif JTVBOT
                     bool condition = prev_live != 0;
-#endif
                     if (condition && (new_live != prev_live || (live && title != prev_title)))
                     {
                         try
                         {
                             if (live)
                             {
-                                
-#if QNETBOT
-                                Irc.SetTopic(State.JtvSettings.Value.Title + " chat - stream is " + ControlCharacter.Color(IrcColor.Green) + "ONLINE" + ControlCharacter.Restore() + ": " + title);
-                                if(prev_live != 0)
-#endif
                                 //send if stream goes live
                                 Irc.SendChannelMessage("The stream is now live with '" + title + "'", false);
-
+                                stream_is_live = true;
                                 //set start time
                                 start_time = DateTime.UtcNow;
                             }
                             else
                             {
-#if QNETBOT
-                                Irc.SetTopic(State.JtvSettings.Value.Title + " chat - stream is " + ControlCharacter.Color(IrcColor.Red) + "OFFLINE" + ControlCharacter.Restore() + " - Check back later!");
-                                if(prev_live != 0)
-#endif
-
                                 //parse duration
                                 double mins = (DateTime.UtcNow - start_time).TotalMinutes;
                                 if (mins > 1.0)
@@ -272,6 +262,7 @@ namespace desBot
                 {
                     //reset viewer count
                     max_viewers = 0;
+                    stream_is_live = false;
                 }
             }
         }
@@ -412,10 +403,8 @@ namespace desBot
 
                 Irc.OnMessage += new Irc.MessageEventHandler(Alice.Tick);
 
-#if JTVBOT
                 //handle subscriber events
                 Irc.OnMessage += new Irc.MessageEventHandler(JTV.HandleMessage);
-#endif
 
                 //start IRC service
                 Irc.Init();
