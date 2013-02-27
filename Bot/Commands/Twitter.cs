@@ -304,7 +304,10 @@ namespace desBot
         {
             if (string.IsNullOrEmpty(args))
             {
-                ShowRecent(false, false);
+                if (lastmessage == null)
+                    ShowRecent(false, false);
+                else
+                    ShowRecent(false, true);
             }
             else
             {

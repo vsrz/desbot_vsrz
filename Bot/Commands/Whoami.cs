@@ -31,7 +31,22 @@ namespace desBot
             if (Limiter.AttemptOperation(message.Level))
             {
                 PrivilegeLevel privilege = CommandHandler.GetPrivilegeLevel(message.From);
-                message.ReplyPrivate("'sup " + message.From + ", you are an " + privilege.ToString());
+                string priv;
+                switch (privilege)
+                {
+                    case PrivilegeLevel.Developer:
+                    case PrivilegeLevel.OnChannel:
+                    case PrivilegeLevel.Operator:
+                    case PrivilegeLevel.Subscriber:
+                        priv = " " + privilege.ToString();
+                        break;
+
+                    default:
+                        priv = "n " + privilege.ToString();
+                        break;
+
+                }
+                message.ReplyPrivate("'sup " + message.From + ", you are a" + priv);
             }
         }
     }

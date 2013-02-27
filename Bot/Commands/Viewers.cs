@@ -114,6 +114,8 @@ namespace desBot
                                             result.total = int.Parse(value);
                                             break;
                                         case "channel_url":
+                                            // API returns the Legacy URL so replace it
+                                            value.Replace("http://justin.tv", "http://twitch.tv");
                                             result.stream = value;
                                             break;
                                         case "title":

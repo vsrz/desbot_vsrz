@@ -299,7 +299,7 @@ namespace desBot
             try
             {   
                 //print versions
-                Log("Running desBot v" + Assembly.GetExecutingAssembly().GetName().Version.ToString() + " for " + (IsJTV ? "Justin TV" : "QuakeNet"));
+                Log("Running desBot v" + Assembly.GetExecutingAssembly().GetName().Version.ToString() + " for " + (IsJTV ? "Twitch TV" : "QuakeNet"));
                 Log("Using SmartIRC4Net library v" + Assembly.GetAssembly(typeof(Meebey.SmartIrc4net.IrcClient)).GetName().Version.ToString());
 
                 //parse commandline
