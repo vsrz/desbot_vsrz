@@ -22,7 +22,8 @@ namespace desBot
 
         HelpCommand()
         {
-            Privilege = PrivilegeLevel.OnChannel;
+            //Privilege = PrivilegeLevel.OnChannel;
+            Privilege = PrivilegeLevel.Operator;
         }
 
         public override string GetKeyword()
