@@ -222,39 +222,34 @@ namespace desBot
                 try
                 {
                     //ignore commands from reserved names
-#if JTVBOT
                     if(message.From == "jtv" || message.From == "jtvnotifier" || message.From.StartsWith("jtv!")) return;
-#elif QNETBOT
-                    if(message.From == "Q") return;
-#endif
 
                     //not a command, test for bad words
                     bool isspam = ContainsBadWord(message.Text);
+                    bool purgetrigger = ContainsFilteredText(message.Text);
                     if (isspam)
                     {
                         Program.Log("This input matches spamfilter");
                     }
-                    if (State.AntiSpamLevel.Value > 0 && GetPrivilegeLevel(message.From) < PrivilegeLevel.Voiced && isspam)
+                    if (State.AntiSpamLevel.Value > 0 && GetPrivilegeLevel(message.From) < PrivilegeLevel.Voiced && ( isspam || purgetrigger ))
                     {
-#if JTVBOT
                         if (State.AntiSpamLevel.Value == 1)
                         {
                             JTV.Purge(message.From);
-                            message.ReplyChannel("Please don't use URLs in chat, " + message.From);
+
+                            // Only report if spam link sent
+                            if (isspam)
+                            {
+                                message.ReplyChannel("Please don't use URLs in chat, " + message.From);
+                            }
+
+                            Program.Log("Message from " + message.From + " was filtered");
                         }
-                        else
-#endif
-                        {
-                            BanSystem.PerformBan(BanSystem.CreateBanMask(message.From).Mask, "10m", "Links not allowed", "Antispam");
-                        }
+
                     }
 
                     //process for AI chatterbot
-#if JTVBOT
                     string name = State.JtvSettings.Value.Nickname;
-#else
-                    string name = State.IrcSettings.Value.Nickname;
-#endif
                     //remove characters
                     string input = message.Text.Replace(",", "").Replace(".", "").Replace("!", "").Replace("?", "").Trim();
                     int needle = input.IndexOf(name, StringComparison.OrdinalIgnoreCase);
@@ -305,6 +300,24 @@ namespace desBot
             }
         }
 
+        /// <summary>
+        /// Tests for a variety of specific filters commonly
+        /// used to spam the channel. Dirty implementation for now.
+        /// </summary>
+        /// <param name="text">Text to check</param>
+        /// <returns>True of a filtered phrase is matched</returns>
+        static bool ContainsFilteredText(string text)
+        {
+            Regex boxBlockChars = new Regex(@"[\u2580-\u259f]");
+            Regex specificMatch = new Regex(@"(multiple streams while masturbating)|(Stephano is a pirate from Somalia)|(drinking the intestinal flora and pulling out the intestines)|(Hi my name is Losernoob)|(still such a fat sack of pig vomit)");
+            MatchCollection c = boxBlockChars.Matches(text);            
+            int spamcount = c.Count;
+            c = specificMatch.Matches(text);
+            spamcount += c.Count;
+
+            return spamcount > 0;
+
+        }
         /// <summary>
         /// Test for bad word
         /// </summary>
