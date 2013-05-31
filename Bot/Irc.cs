@@ -798,7 +798,7 @@ namespace desBot
                 client.RfcNames(Channel);
                 State = IrcState.Ready;
                 SendRawMessage("JTVCLIENT");
-                SendChannelMessage("desBot now online! (v" + Token.GetCurrentVersion() + "@twitch.tv)" + (Program.IsBuggyTwitch ? "/bt" : ""), false);
+                SendChannelMessage("TaraBabBot is operational (v" + Token.GetCurrentVersion() + "@twitch.tv)" + (Program.IsBuggyTwitch ? "/bt" : ""), false);
             }
             
 #elif QNETBOT

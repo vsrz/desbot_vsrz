@@ -28,7 +28,7 @@ namespace desBot
 
         public void Load()
         {
-            foreach (string file in Directory.GetFiles(Directory.GetParent(Directory.GetCurrentDirectory()).FullName + Path.DirectorySeparatorChar + "AIML", "*.aiml"))
+            foreach (string file in Directory.GetFiles(Directory.GetCurrentDirectory()+ Path.DirectorySeparatorChar + "AIML", "*.aiml"))
             {
                 var doc = XDocument.Load(file);
                 var first = doc.Element("aiml");
@@ -537,7 +537,7 @@ namespace desBot
                     string joke = Process("dummy", "tell me a joke", PrivilegeLevel.Operator);
                     if (joke.Length != 0)
                     {
-                        Irc.SendChannelMessage(joke, false);
+                        //Irc.SendChannelMessage(joke, false);
                     }
                 }
             }
