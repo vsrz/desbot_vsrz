@@ -17,6 +17,9 @@ namespace desBot
         //IRC settings
         public IrcSettings IRC = new IrcSettings();
 
+		//SC2 Ranks API
+		public SC2RanksSettings SC2Ranks = new SC2RanksSettings();
+
         //flag for control characters
         public bool ControlChars = true;
 
@@ -85,7 +88,7 @@ namespace desBot
     public class JtvSettings
     {
         public string Channel = "#desrowfighting";
-        public string Title = "desRow";
+        public string Title = "desow";
         public string Nickname = "desbot";
         public string Password = "password";
     }
@@ -106,6 +109,13 @@ namespace desBot
         public bool QHideIP = true;
     }
 
+	[Serializable]
+	public class SC2RanksSettings
+	{
+		public string ApiKey = "";
+		public bool IsEnabled = false;
+	}
+
     /// <summary>
     /// All IRC settings
     /// </summary>
@@ -114,6 +124,7 @@ namespace desBot
     {
         public IrcSettings QNet;
         public JtvSettings JTV;
+		public SC2RanksSettings SC2ranks;
     }
 
     /// <summary>
@@ -208,6 +219,10 @@ namespace desBot
                 //get IRC settings
                 State.IrcSettings.Value = result.IRC;
 
+				// get Sc2ranks settings
+				State.SC2RanksSettings.Value = result.SC2Ranks;
+
+
                 //get control character flag
                 State.ControlCharacters.Value = result.ControlChars;
 
@@ -216,7 +231,7 @@ namespace desBot
 
                 //get quiet ban
                 State.UseQuietBan.Value = result.UseQuietBan;
-
+				
                 //get public IP
                 State.PublicIP.Value = result.PublicIP;
 
@@ -300,6 +315,9 @@ namespace desBot
 
                 //get IRC settings
                 settings.IRC = State.IrcSettings.Value;
+
+				//get SC2Ranks Settings
+				settings.SC2Ranks = State.SC2RanksSettings.Value;
 
                 //control character flag
                 settings.ControlChars = State.ControlCharacters.Value;

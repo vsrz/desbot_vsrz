@@ -9,5 +9,5 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyProduct("desBot")]
 [assembly: AssemblyCopyright("© MLM & Doji Programming 2013 / vsritual")]
 [assembly: AssemblyTrademark("")]
-[assembly: AssemblyVersion("0.4.6.1")]
-[assembly: AssemblyFileVersion("0.4.6.1")]
+[assembly: AssemblyVersion("0.4.6.2")]
+[assembly: AssemblyFileVersion("0.4.6.2")]

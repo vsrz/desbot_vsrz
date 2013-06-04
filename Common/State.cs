@@ -77,7 +77,12 @@ namespace desBot
         /// </summary>
         public static DynamicProperty<IrcSettings, IrcSettings> IrcSettings = new DynamicProperty<IrcSettings, IrcSettings>("IrcSettings", new IrcSettings());
 
-        /// <summary>
+		/// <summary>
+		/// SC2Ranks API Settings
+		/// </summary>
+		public static DynamicProperty<SC2RanksSettings, SC2RanksSettings> SC2RanksSettings = new DynamicProperty<SC2RanksSettings, SC2RanksSettings>("SC2RanksSettings", new SC2RanksSettings());
+        
+		/// <summary>
         /// Flag selecting if control characters are enabled
         /// </summary>
         public static DynamicProperty<bool, bool> ControlCharacters = new DynamicProperty<bool, bool>("ControlCharacters", true);

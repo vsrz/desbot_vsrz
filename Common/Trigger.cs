@@ -8,6 +8,7 @@ namespace desBot
     {
         public string Keyword { get; set; }
         public string Text { get; set; }
+		public bool Protect { get; set; }
 
         public override bool Equals(object obj)
         {
@@ -28,6 +29,7 @@ namespace desBot
     {
         public string Keyword;
         public string Text;
+		public bool Protect;
     }
 
     /// <summary>
@@ -40,6 +42,7 @@ namespace desBot
             SerializableTrigger result = new SerializableTrigger();
             result.Keyword = ControlCharacter.Serialize(other.Keyword);
             result.Text = ControlCharacter.Serialize(other.Text);
+			result.Protect = other.Protect;
             return result;
         }
         public Trigger Deserialize(SerializableTrigger other)
@@ -47,6 +50,7 @@ namespace desBot
             Trigger result = new Trigger();
             result.Keyword = ControlCharacter.Deserialize(other.Keyword);
             result.Text = ControlCharacter.Deserialize(other.Text);
+			result.Protect = other.Protect;
             return result;
         }
     }

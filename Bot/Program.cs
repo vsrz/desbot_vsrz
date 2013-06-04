@@ -15,6 +15,7 @@ namespace desBot
         //flag set on JTV
         public const bool IsJTV = true;
         public static bool IsBuggyTwitch = false;
+		public static string BotName = "TwitBot";
 
         //configuration file name
         const string ConfigFileName = "Settings.xml";
@@ -311,7 +312,7 @@ namespace desBot
                         IsBuggyTwitch = true;
                     }
                 }
-
+				
                 //load settings
                 try
                 {
@@ -378,7 +379,7 @@ namespace desBot
                     {
                         toremove = trigger;
                     }
-                    else new TriggerInstance(trigger.Text, trigger.Keyword);
+                    else new TriggerInstance(trigger.Text, trigger.Keyword, false);
                 }
 
                 //init change watcher
@@ -408,7 +409,7 @@ namespace desBot
 
                 //start IRC service
                 Irc.Init();
-
+				
                 //init done
                 Program.Log("Main thread initialisation complete");
 

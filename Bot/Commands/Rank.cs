@@ -7,10 +7,36 @@ using System.Xml;
 using System.IO;
 namespace desBot
 {
+	static class SC2Ranks
+	{
+		public static string ApiKey
+		{
+			get
+			{
+				return desBot.State.SC2RanksSettings.Value.ApiKey;
+			}
+
+		}
+
+		public static bool IsEnabled
+		{
+			get
+			{
+				return desBot.State.SC2RanksSettings.Value.IsEnabled;
+			}
+
+			set
+			{
+				desBot.State.SC2RanksSettings.Value.IsEnabled = value;
+			}
+		}
+	}
+
     class RankCommand : Command
     {
-        const string appkey = "?appKey=desBot";
-        static TimeSpan cacheduration = TimeSpan.FromHours(1.0);
+		//const string appkey = "?appKey=desBot";
+		static string appkey = "?appKey=" + SC2Ranks.ApiKey;
+		static TimeSpan cacheduration = TimeSpan.FromHours(1.0);
 
         class Cache
         {
@@ -372,17 +398,52 @@ namespace desBot
 
         public override string GetHelpText(PrivilegeLevel current, string more)
         {
-            return " <name> <region> [<bracket>]: Looks up SC2 rank by character name, if <bracket> not specified, 1v1 is used";
+			string ret = " <name> <region> [<bracket>]: Looks up SC2 rank by character name, if <bracket> not specified, 1v1 is used";           
+			return ret;
         }
 
         public override void Execute(IrcMessage message, string args)
         {
-            if (Limiter.AttemptOperation(message.Level))
+			string[] arg = args.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+			/* If ranks are disabled, show the options for the channel moderator */
+			if (arg.Length < 2 && message.Level >= PrivilegeLevel.Operator && !SC2Ranks.IsEnabled)
+			{
+				throw new Exception("Usage: !rank <enabled> <true/false>: Toggles the availability of the 'rank' command");
+			}
+			
+			/* see if we are toggling the availability of the command */
+			if (arg.Length == 2)
+			{
+				if ((arg[0].ToLower() == "enabled" || arg[0].ToLower() == "enable") && message.Level >= PrivilegeLevel.Operator)
+				{
+					string toggle = arg[1].ToString().ToLower();
+					bool flag = true;
+					if (toggle == "false" || toggle == "0" || toggle == "off")
+					{
+						flag = false;
+					}
+
+					if (SC2Ranks.ApiKey == String.Empty)
+					{
+						SC2Ranks.IsEnabled = false;
+						throw new Exception("SC2Ranks ApiKey must be set in internal configuration.");
+					}
+
+					SC2Ranks.IsEnabled = flag;
+					message.ReplyPrivate("Rank lookup has been " + (SC2Ranks.IsEnabled ? "en" : "dis") + "abled");
+					return;
+				}
+			}
+
+			/* Regular rank command logic */
+			if (Limiter.AttemptOperation(message.Level) && SC2Ranks.IsEnabled)
             {
-                string[] arg = args.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                 if (arg.Length != 2 && arg.Length != 3) throw new Exception("Usage: !rank <name> <region>");
                 string region = null;
                 string name = arg[1];
+
+				/* Continue with rank lookup */
                 for (int i = 0; i < 2 && region == null; i++)
                 {
                     switch (arg[i].ToLower())
