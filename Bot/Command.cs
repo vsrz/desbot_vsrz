@@ -235,7 +235,7 @@ namespace desBot
                     {
                         if (State.AntiSpamLevel.Value == 1)
                         {
-                            JTV.Purge(message.From);
+                            JTV.Purge(message.From, 30);
 
                             // Only report if spam link sent
                             if (isspam)

@@ -58,13 +58,13 @@ namespace desBot
         /// Purges chat of user
         /// </summary>
         /// <param name="nick">Nickname of user</param>
-        public static void Purge(string nick)
+        public static void Purge(string nick, int length = 1)
         {
 #if OLDJTV
             TimeOut(nick);
             Unban(nick);
 #else
-            Irc.SendChannelMessage("/timeout " + nick + " 1", false);
+            Irc.SendChannelMessage("/timeout " + nick + " " + length.ToString(), false);
 #endif
         }
 
