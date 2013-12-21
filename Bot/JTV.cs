@@ -39,11 +39,7 @@ namespace desBot
         /// <param name="nick">Nickname of user</param>
         public static void Unban(string nick)
         {
-#if OLDJTV
-            Irc.Unban(nick);
-#else
             Irc.SendChannelMessage("/unban " + nick, false);
-#endif
         }
 
         /// <summary>
@@ -60,12 +56,7 @@ namespace desBot
         /// <param name="nick">Nickname of user</param>
         public static void Purge(string nick, int length = 1)
         {
-#if OLDJTV
-            TimeOut(nick);
-            Unban(nick);
-#else
             Irc.SendChannelMessage("/timeout " + nick + " " + length.ToString(), false);
-#endif
         }
 
         /// <summary>
@@ -74,11 +65,7 @@ namespace desBot
         /// <param name="enabled">If true, enabled slow mode, of false, disables slow mode</param>
         public static void Slowmode(bool enabled)
         {
-#if OLDJTV
-            Irc.SetChannelMode(enabled ? "+m" : "-m");
-#else
             Irc.SendChannelMessage(enabled ? "/slow 60" : "/slowoff", false);
-#endif
         }
 
         /// <summary>

@@ -187,6 +187,15 @@ namespace desBot
         /// </summary>
         public static DynamicProperty<string, string> AdText = new DynamicProperty<string, string>("AdText", String.Empty);
 
+        /// <summary>
+        /// Length of time a user will be nuked if caught in banned phrase filter
+        /// </summary>
+        public static DynamicProperty<int, int> NukeTime = new DynamicProperty<int, int>("NukeTime", 0);
+
+        /// <summary>
+        /// List of banned phrases
+        /// </summary>
+        public static DynamicList<Nuke, SerializableNuke> NukeList = new DynamicList<Nuke, SerializableNuke>();
 
     }
 }

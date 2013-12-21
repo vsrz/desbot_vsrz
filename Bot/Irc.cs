@@ -113,7 +113,7 @@ namespace desBot
             get 
             { 
 #if JTVBOT
-                return desBot.State.JtvSettings.Value.Channel.Substring(1) + ".jtvirc.com";
+                return desBot.State.JtvSettings.Value.Hostname;
 #elif QNETBOT
                 return desBot.State.IrcSettings.Value.Server;
 #endif

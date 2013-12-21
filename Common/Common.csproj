@@ -47,6 +47,7 @@
     <Compile Include="Ban.cs" />
     <Compile Include="Connection.cs" />
     <Compile Include="ControlCharacter.cs" />
+    <Compile Include="Nuke.cs" />
     <Compile Include="DynamicCollection.cs" />
     <Compile Include="DynamicProperty.cs" />
     <Compile Include="HostMask.cs" />

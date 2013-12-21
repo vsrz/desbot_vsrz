@@ -79,6 +79,10 @@ namespace desBot
         public bool AdEnabled = true;
         public string AdText = string.Empty;
 
+        // Nuke stuff
+        public List<SerializableNuke> Nukes = new List<SerializableNuke>();
+        public int NukeTime = 10;
+
     }
 
     /// <summary>
@@ -88,9 +92,10 @@ namespace desBot
     public class JtvSettings
     {
         public string Channel = "#desrowfighting";
-        public string Title = "desow";
+        public string Title = "desrow";
         public string Nickname = "desbot";
         public string Password = "password";
+        public string Hostname = "irc.twitch.tv";
     }
 
     /// <summary>
@@ -258,6 +263,11 @@ namespace desBot
                 State.AdEnabled.Value = result.AdEnabled;
                 State.AdText.Value = result.AdText;
 
+                // Nuke Command Settings
+                List<Nuke> nukes = DeserializeList(result.Nukes, new NukeSerializer());
+                State.NukeList.Add(nukes);
+                State.NukeTime.Value = result.NukeTime;
+
                 //success
                 return "Applied settings: " + result.UserList.Count.ToString() + " users, " + result.BanList.Count.ToString() + " bans, " + result.AccountList.Count.ToString() + " accounts, " + result.Quotes.Count.ToString() + " quotes, " + result.Triggers.Count.ToString() + " triggers";
             }
@@ -352,6 +362,10 @@ namespace desBot
                 settings.AdInterval = State.AdInterval.Value;
                 settings.AdText = State.AdText.Value;
                 settings.AdEnabled = State.AdEnabled.Value;
+
+                // Nukes
+                settings.Nukes = SerializeList(State.NukeList.GetItems(), new NukeSerializer());
+                settings.NukeTime = State.NukeTime.Value;
 
                 //done
                 return settings;

@@ -68,6 +68,7 @@
     <Compile Include="Commands\Ad.cs" />
     <Compile Include="Commands\BanList.cs" />
     <Compile Include="Commands\Clear.cs" />
+    <Compile Include="Commands\Nuke.cs" />
     <Compile Include="Commands\Elevate.cs" />
     <Compile Include="Commands\Grep.cs" />
     <Compile Include="Commands\Limit.cs" />

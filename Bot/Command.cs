@@ -248,6 +248,25 @@ namespace desBot
 
                     }
 
+                    // Not a bad word, let's check for nuke text
+                    if (ContainsNukePhrase(message.Text) && GetPrivilegeLevel(message.From) < PrivilegeLevel.Voiced)
+                    {
+                        // Determine the nuke time, in minutes
+                        int time = State.NukeTime.Value;
+                        if (time == 0)
+                        {
+                            time = 1;
+                        }
+                        else
+                        {
+                            time = time * 60;
+                        }
+
+                        // nuke this person
+                        JTV.Purge(message.From, time);
+                        Program.Log("Message from " + message.From + " was nuked");
+                    }
+
                     //process for AI chatterbot
                     string name = State.JtvSettings.Value.Nickname;
                     //remove characters
@@ -318,6 +337,25 @@ namespace desBot
             return spamcount > 0;
 
         }
+
+        /// <summary>
+        /// Checks against the Nuke database and returns true if there's a match
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        static bool ContainsNukePhrase(string text)
+        {
+            foreach (Nuke phrase in State.NukeList.GetItems())
+            {
+                // Cheeky way to match whole word only
+                if (text.ToUpper().IndexOf(" " + phrase.Text.ToUpper() + " ") > -1)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         /// <summary>
         /// Test for bad word
         /// </summary>
