@@ -50,7 +50,7 @@ namespace desBot
     {
         public NukeInfoCommand(CommandGroup group) : base(group)
         {
-            Privilege = PrivilegeLevel.OnChannel;
+            Privilege = PrivilegeLevel.Operator;
         }
 
         public override string GetKeyword()
@@ -100,7 +100,7 @@ namespace desBot
     {
         public NukeFindCommand(CommandGroup group) : base(group)
         {
-            Privilege = PrivilegeLevel.OnChannel;
+            Privilege = PrivilegeLevel.Operator;
         }
 
         public override string GetKeyword()
