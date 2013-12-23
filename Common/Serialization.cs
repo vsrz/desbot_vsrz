@@ -457,6 +457,7 @@ namespace desBot
             if (typeof(T) == typeof(Quote) && typeof(S) == typeof(SerializableQuote)) return (ISerializer<T, S>)new QuoteSerializer();
             if (typeof(T) == typeof(Trigger) && typeof(S) == typeof(SerializableTrigger)) return (ISerializer<T, S>)new TriggerSerializer();
             if (typeof(T) == typeof(Account) && typeof(S) == typeof(SerializableAccount)) return (ISerializer<T, S>)new AccountSerializer();
+            if (typeof(T) == typeof(Nuke) && typeof(S) == typeof(SerializableNuke)) return (ISerializer<T, S>)new NukeSerializer();
             if (typeof(T) == typeof(S)) return (ISerializer<T, S>)new DummySerializer<T>();
             throw new Exception("Type not serializable with mapping T->S: " + typeof(T).Name + "->" + typeof(S).Name);
         }
