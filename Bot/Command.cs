@@ -221,6 +221,14 @@ namespace desBot
             {
                 try
                 {
+                    // first check for sub notify
+                    if (message.From.ToLower() == State.NewSubNotifyUser.Value.ToLower())
+                    {
+                        if (message.Text.ToString().EndsWith("just subscribed!"))
+                        {
+                            NewSubCommand.AnnounceNewSubscription(message);
+                        }
+                    }
                     //ignore commands from reserved names
                     if(message.From == "jtv" || message.From == "jtvnotifier" || message.From.StartsWith("jtv!")) return;
 

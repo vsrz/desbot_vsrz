@@ -83,6 +83,10 @@ namespace desBot
         public List<SerializableNuke> Nukes = new List<SerializableNuke>();
         public int NukeTime = 10;
 
+        // New sub welcome text
+        public string NewSubText = "Thanks for subscribing, %s!";
+        public string NewSubNotifyUser = "twitchnotify";
+
     }
 
     /// <summary>
@@ -268,6 +272,10 @@ namespace desBot
                 State.NukeList.Add(nukes);
                 State.NukeTime.Value = result.NukeTime;
 
+                // New Sub Text
+                State.NewSubText.Value = result.NewSubText;
+                State.NewSubNotifyUser.Value = result.NewSubNotifyUser;
+
                 //success
                 return "Applied settings: " + result.UserList.Count.ToString() + " users, " + result.BanList.Count.ToString() + " bans, " + result.AccountList.Count.ToString() + " accounts, " + result.Quotes.Count.ToString() + " quotes, " + result.Triggers.Count.ToString() + " triggers";
             }
@@ -366,6 +374,10 @@ namespace desBot
                 // Nukes
                 settings.Nukes = SerializeList(State.NukeList.GetItems(), new NukeSerializer());
                 settings.NukeTime = State.NukeTime.Value;
+
+                // New Sub text
+                settings.NewSubText = State.NewSubText.Value;
+                settings.NewSubNotifyUser = State.NewSubNotifyUser.Value;
 
                 //done
                 return settings;

@@ -197,5 +197,12 @@ namespace desBot
         /// </summary>
         public static DynamicList<Nuke, SerializableNuke> NukeList = new DynamicList<Nuke, SerializableNuke>();
 
+        /// <summary>
+        /// Command which welcomes new subs
+        /// </summary>
+        public static DynamicProperty<string, string> NewSubText = new DynamicProperty<string, string>("NewSubText", String.Empty);
+        public static DynamicProperty<string, string> NewSubNotifyUser = new DynamicProperty<string, string>("JTVNotifyUser", "twitchnotify");
+
+
     }
 }

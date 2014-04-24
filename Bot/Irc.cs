@@ -142,11 +142,7 @@ namespace desBot
         { 
             get 
             { 
-#if JTVBOT
                 return desBot.State.JtvSettings.Value.Nickname;
-#elif QNETBOT
-                return desBot.State.IrcSettings.Value.Username;
-#endif
             }
         }
 
@@ -157,11 +153,8 @@ namespace desBot
         { 
             get 
             {
-#if JTVBOT
                 return desBot.State.JtvSettings.Value.Nickname;
-#elif QNETBOT
-                return desBot.State.IrcSettings.Value.Nickname;
-#endif
+
             }
         }
         
@@ -172,11 +165,7 @@ namespace desBot
         { 
             get
             {
-#if JTVBOT
                 return desBot.State.JtvSettings.Value.Channel;
-#elif QNETBOT
-                return desBot.State.IrcSettings.Value.Channel;
-#endif
             }
         }
 
@@ -184,18 +173,6 @@ namespace desBot
         /// The current state of the IRC tool
         /// </summary>
         public static IrcState State { get { return state; } private set { state = value; if (OnStateChanged != null) OnStateChanged.Invoke(); } }
-
-#if QNETBOT
-        /// <summary>
-        /// The level with which was authed with Q for he channel
-        /// </summary>
-        public static QAuthLevel QLevel { get; private set; }
-
-        /// <summary>
-        /// The Q command queue associated with this IRC tool
-        /// </summary>
-        public static QCommandQueue Queue { get { return q; } }
-#endif
 
         /// <summary>
         /// Event handler delegate for state changes
@@ -224,26 +201,11 @@ namespace desBot
         /// <param name="settings">The settings to use while running the IRC tool</param>
         public static void Init()
         {
-#if JTVBOT
             JtvSettings Settings = desBot.State.JtvSettings.Value;
             if (Settings == null) throw new Exception("No settings specified");
             if (string.IsNullOrEmpty(Settings.Channel)) throw new Exception("No channel specified");
             if (string.IsNullOrEmpty(Settings.Nickname)) throw new Exception("No JTV username specified");
             if (string.IsNullOrEmpty(Settings.Password)) throw new Exception("No JTV password specified");
-
-#elif QNETBOT
-            IrcSettings Settings = desBot.State.IrcSettings.Value;
-
-            //check argument
-            if (Settings == null) throw new Exception("No settings specified");
-            if (string.IsNullOrEmpty(Settings.Server) || !Settings.Server.EndsWith("quakenet.org")) throw new Exception("Only QuakeNet servers are supported");
-            if (Settings.Port <= 0 || Settings.Port >= 65536) throw new Exception("Invalid server port specified");
-            if (string.IsNullOrEmpty(Settings.Username) || Settings.Username.Contains(" ")) throw new Exception("Invalid username specified");
-            if (string.IsNullOrEmpty(Settings.Nickname) || Settings.Nickname.Contains(" ")) throw new Exception("Invalid nickname specified");
-            if (string.IsNullOrEmpty(Settings.Channel) || Settings.Channel.Contains(" ") || !Settings.Channel.StartsWith("#")) throw new Exception("Invalid channel name specified");
-            if (string.IsNullOrEmpty(Settings.QAccount) || Settings.QAccount.Contains(" ")) throw new Exception("Invalid Q account name specified");
-            if (string.IsNullOrEmpty(Settings.QPassword) || Settings.QPassword.Contains(" ")) throw new Exception("Invalid Q password specified");
-#endif
 
             //disconnect
             if (client != null && client.IsConnected) client.Disconnect();
@@ -255,10 +217,6 @@ namespace desBot
 
             //initial values
             state = IrcState.None;
-#if QNETBOT
-            q = null;
-            QLevel = QAuthLevel.None;
-#endif
             Program.Log("IRC initialising");
 
             //attach event handler to send delay
@@ -294,9 +252,6 @@ namespace desBot
 
             //set up config
             client.SendDelay = desBot.State.SendDelay.Value;
-#if QNETBOT
-            client.ActiveChannelSyncing = true;
-#endif
             client.AutoNickHandling = false;
             
             //set up event handlers
@@ -306,18 +261,9 @@ namespace desBot
             client.OnRegistered += new System.EventHandler(client_OnRegistered);
             client.OnDisconnecting += new System.EventHandler(client_OnDisconnecting);
             client.OnDisconnected += new System.EventHandler(client_OnDisconnected);
-#if JTVBOT
             client.OnOp += new OpEventHandler(client_OnOp);
             client.OnDeop += new DeopEventHandler(client_OnDeop);
             client.OnNames += new NamesEventHandler(client_OnNames);
-#elif QNETBOT
-            client.OnBan += new BanEventHandler(client_OnBan);
-            client.OnUnban += new UnbanEventHandler(client_OnUnban);
-            client.OnKick += new KickEventHandler(client_OnKick);
-            client.OnWho += new WhoEventHandler(client_OnWho);
-            client.OnNickChange += new NickChangeEventHandler(client_OnNickChange);
-            client.OnQuit += new QuitEventHandler(client_OnQuit);
-#endif
             client.OnJoin += new JoinEventHandler(client_OnJoin);
             client.OnPart += new PartEventHandler(client_OnPart);
             client.OnQueryMessage += new IrcEventHandler(client_OnQueryMessage);
@@ -340,7 +286,6 @@ namespace desBot
             new Thread(new ThreadStart(client_Listen)).Start();
         }
 
-#if JTVBOT
         /// <summary>
         /// Touches the userlist to make sure a user exists, and if not, creates it
         /// </summary>
@@ -398,7 +343,6 @@ namespace desBot
                 if (name[0] == '@') user.Meta.JTVModerator = true;
             }
         }
-#endif
 
         /// <summary>
         /// Disconnects the IRC tool
@@ -424,13 +368,7 @@ namespace desBot
         /// <returns>True if supported</returns>
         static bool HasControlSupport(bool channel)
         {
-#if JTVBOT
             return false;
-#elif QNETBOT
-            Meebey.SmartIrc4net.Channel c = client.GetChannel(Channel);
-            if (channel && c == null) return false;
-            return (!(channel ? c.Mode.Contains("c") : false) && ControlCharacter.Enabled);
-#endif
         }
 
         /// <summary>
@@ -441,7 +379,6 @@ namespace desBot
         {
             if (State != IrcState.Ready) throw new Exception("Invalid state for sending messages");
             string[] lines = text.Split(new char[] { '\n' });
-#if JTVBOT
             {
                 //MLM: now also split lines on 250 length when on JTV, since channel messages are truncated at that point
                 const string more = ">>";
@@ -481,7 +418,6 @@ namespace desBot
                     idx++;
                 }
             }
-#endif
             foreach (string line in lines)
             {
                 string compat = !HasControlSupport(true) ? ControlCharacter.Strip(line) : line;
@@ -499,10 +435,8 @@ namespace desBot
         /// <param name="notice">If set, send as NOTICE, otherwise, as PRIVMSG</param>
         public static void SendPrivateMessage(string text, string nickname, bool notice, bool immediately)
         {
-#if JTVBOT
             //on JTV, notices are not supported
             notice = false;
-#endif
             if (State < IrcState.Authing || State > IrcState.Ready) throw new Exception("Invalid state for sending messages");
             if (nickname.StartsWith("#") || nickname.Contains(" ")) throw new Exception("Invalid nickname");
             string[] lines = text.Split(new char[] { '\n' });
@@ -533,32 +467,6 @@ namespace desBot
             client_OnMessage(message);
         }
 
-#if QNETBOT
-        /// <summary>
-        /// Get privilege level for nickname
-        /// </summary>
-        /// <param name="nick">The nick to get privilege information for</param>
-        /// <returns>The privilege level associated with the nickname</returns>
-        public static PrivilegeLevel GetPrivilegeLevel(string nick)
-        {
-            ChannelUser user = client.GetChannelUser(Channel, nick);
-            if (user == null) return PrivilegeLevel.None;
-            if (user.IsOp) return PrivilegeLevel.Operator;
-            if (user.IsVoice) return PrivilegeLevel.Voiced;
-            return PrivilegeLevel.OnChannel;
-        }
-
-        /// <summary>
-        /// Count number of bans on the channel
-        /// </summary>
-        /// <returns>Number of bans on channel</returns>
-        public static int CountBans()
-        {
-            Channel channel = client.GetChannel(Channel);
-            if (channel == null) return 0;
-            return channel.Bans.Count;
-        }
-#endif
 
         /// <summary>
         /// Ban the specified hostmask
@@ -606,20 +514,6 @@ namespace desBot
             client.RfcMode(Channel, mode);
         }
 
-#if QNETBOT
-        /// <summary>
-        /// Checks if the specified ban is currently enforced
-        /// </summary>
-        /// <param name="mask">The mask to check</param>
-        /// <returns>True if the ban is enforced</returns>
-        public static bool IsBanEnforced(string mask)
-        {
-            Channel channel = client.GetChannel(Channel);
-            if (channel == null || !channel.IsSycned) throw new Exception("Not synced with that channel");
-            return channel.Bans.Contains(mask);
-        }
-#endif
-
         static IrcState lastcheck = IrcState.None;
         public static void DetectHang(object ignored)
         {
@@ -642,34 +536,16 @@ namespace desBot
             }
         }
 
-#if QNETBOT
-        static void client_OnBan(object sender, BanEventArgs e)
-        {
-            BanSystem.OnIrcBan(e.Hostmask, e.Who);
-        }
-
-        static void client_OnUnban(object sender, UnbanEventArgs e)
-        {
-            BanSystem.OnIrcUnban(e.Hostmask, e.Who);
-        }
-#endif
-
         static void client_OnChannelMessage(object sender, IrcEventArgs e)
         {
             Program.Log("channel message from " + e.Data.Nick + ": " + e.Data.Message);
-#if JTVBOT
             if (BanSystem.OnIrcChannelMessage(e.Data.Nick)) return;
-#endif
             client_OnMessage(new IrcMessage(e.Data.Nick, e.Data.Message, e.Data.Channel, false));
         }
 
         static void client_OnQueryNotice(object sender, IrcEventArgs e)
         {
-#if QNETBOT
-            string nick = e.Data.Nick;
-#elif JTVBOT
             string nick = e.Data.From;
-#endif
             if (nick == null) client_OnServerMessage(e.Data.Message);
             else
             {
@@ -680,11 +556,7 @@ namespace desBot
 
         static void client_OnQueryMessage(object sender, IrcEventArgs e)
         {
-#if QNETBOT
-            string nick = e.Data.Nick;
-#elif JTVBOT
             string nick = e.Data.From;
-#endif
             if (nick == null) client_OnServerMessage(e.Data.Message);
             else
             {
@@ -697,9 +569,6 @@ namespace desBot
         {
             lock (desBot.State.GlobalSync)
             {
-#if QNETBOT
-                if (message.From == "Q") client_OnQMessage(message.Text);
-#endif
                 if (OnMessage != null) OnMessage.Invoke(message);
             }
         }
@@ -710,88 +579,8 @@ namespace desBot
             client_OnMessage(new IrcMessage("<server>", text, null, false));
         }
 
-#if QNETBOT
-        static void client_OnQMessage(string text)
-        {
-            IrcSettings Settings = desBot.State.IrcSettings.Value;
-            if (State == IrcState.Authing)
-            {
-                if (text == "You are now logged in as " + Settings.QAccount + ".")
-                {
-                    Program.Log("Authed with Q as " + Settings.QAccount);
-                    if (Settings.QHideIP)
-                    {
-                        Program.Log("Requesting usermode +x");
-                        State = IrcState.Cloaking;
-                        client.RfcMode(Nickname, "+x", Priority.Critical);
-                    }
-                    else
-                    {
-                        State = IrcState.Retrieving;
-                        client.SendMessage(SendType.Message, "Q", "CHANLEV " + Channel + " #" + Settings.QAccount);
-                    }
-                }
-                else
-                {
-                    Program.Log("Auth with Q failed");
-                    State = IrcState.Error_AuthFailed;
-                    Disconnect("Q AUTH failed");
-                }
-            }
-            else if (State == IrcState.Retrieving)
-            {
-                string expected = "Flags for #" + Settings.QAccount + " on " + Channel + ": ";
-                if (text.StartsWith(expected))
-                {
-                    string flags = text.Substring(expected.Length);
-                    if (flags.Contains("n")) QLevel = QAuthLevel.Owner;
-                    else if (flags.Contains("m")) QLevel = QAuthLevel.Master;
-                    else if (flags.Contains("o")) QLevel = QAuthLevel.Operator;
-                    else if (flags.Contains("v")) QLevel = QAuthLevel.Voiced;
-                    else if (flags.Contains("k")) QLevel = QAuthLevel.Known;
-                }
-                else if (text.StartsWith("You do not have sufficient access"))
-                {
-                    QLevel = QAuthLevel.None;
-                }
-                else if (text.EndsWith("is unknown or suspended."))
-                {
-                    QLevel = QAuthLevel.None;
-                }
-                else if (text.StartsWith("Remember: NO-ONE from QuakeNet will ever ask for your password"))
-                {
-                    return;
-                }
-                else
-                {
-                    State = IrcState.Error_AuthFailed;
-                    Disconnect("Q AUTH failed");
-                }
-                Program.Log("Retrieved Q auth level on " + Channel + ": " + QLevel.ToString());
-                q = new QCommandQueue();
-                q.OnUpdate += new QCommandQueue.UpdateEventHandler(q_OnUpdate);
-                State = IrcState.JoiningChannel;
-                client.RfcJoin(Channel);
-            }
-            else
-            {
-                if (q != null)
-                {
-                    q.OnResponse(text);
-                }
-                else Program.Log("Unexpected message from Q (no queue): " + text);
-            }
-        }
-
-        static void q_OnUpdate()
-        {
-            if (OnStateChanged != null) OnStateChanged.Invoke();
-        }
-
-#endif
         static void client_OnJoin(object sender, JoinEventArgs e)
         {
-#if JTVBOT
             TouchUser(e.Who, true, false);
             if (e.Who.ToLower() == Nickname.ToLower())
             {
@@ -802,50 +591,11 @@ namespace desBot
                 SendChannelMessage(botname + " is online! (v" + Token.GetCurrentVersion() + "@twitch.tv)" + (Program.IsBuggyTwitch ? "/bt" : ""), false);
             }
             
-#elif QNETBOT
-            if (e.Channel != Channel) return;
-            if (e.Who == Nickname)
-            {
-                Program.Log("Joined channel " + Channel + ", ready to receive commands");
-                State = IrcState.Ready;
-            }
-            else
-            {
-                DynamicDictionary<string, User, SerializableUser> users = desBot.State.UserList;
-                HostMask entry = new HostMask(e.Who + "!" + e.Data.Ident + "@" + e.Data.Host);
-                try
-                {
-                    User old = users.Lookup(e.Who);
-                    if (old != null)
-                    {
-                        users.Remove(old);
-                    }
-                }
-                catch (Exception ex) { }
-                users.Add(new User(e.Who, entry));
-                BanSystem.OnIrcEnter(entry, e.Who);
-            }
-#endif
         }
 
         static void client_OnPart(object sender, PartEventArgs e)
         {
-#if JTVBOT
             TouchUser(e.Who, false, true);
-#elif QNETBOT
-            DynamicDictionary<string, User, SerializableUser> users = desBot.State.UserList;
-            DateTime joined = DateTime.UtcNow;
-            try
-            {
-                User old = users.Lookup(e.Who);
-                users.Remove(old);
-                joined = old.Joined;
-            }
-            catch (Exception ex) { }
-            HostMask entry = new HostMask(e.Who + "!" + e.Data.Ident + "@" + e.Data.Host);
-            users.Add(new User(e.Who, entry, joined, DateTime.UtcNow));
-            BanSystem.OnIrcLeave(entry);
-#endif
         }
 
         static void client_OnConnecting(object sender, System.EventArgs e)
@@ -858,11 +608,7 @@ namespace desBot
         {
             Program.Log("Connected with server, registering as " + Nickname);
             State = IrcState.Registering;
-#if JTVBOT
             client.Login(new string[] { Nickname }, Nickname, 0, Nickname, desBot.State.JtvSettings.Value.Password);
-#elif QNETBOT
-            client.Login(new string[] { Nickname }, "desBot v" + Token.GetCurrentVersion(), 0, Username);
-#endif
         }
 
         static void client_OnConnectionError(object sender, EventArgs e)
@@ -874,14 +620,8 @@ namespace desBot
 
         static void client_OnRegistered(object sender, System.EventArgs e)
         {
-#if JTVBOT
             State = IrcState.JoiningChannel;
             client.RfcJoin(Channel);
-#elif QNETBOT
-            Program.Log("Registered, authing with Q as " + desBot.State.IrcSettings.Value.QAccount);
-            State = IrcState.Authing;
-            client.SendMessage(SendType.Message, "Q@CServe.quakenet.org", "AUTH " + desBot.State.IrcSettings.Value.QAccount + " " + desBot.State.IrcSettings.Value.QPassword);
-#endif
         }
 
         static void client_OnDisconnecting(object sender, System.EventArgs e)
@@ -906,116 +646,13 @@ namespace desBot
             }
             else if (e.Data.ReplyCode == ReplyCode.BanList)
             {
-#if QNETBOT
-                if (e.Data.RawMessageArray.Length >= 7)
-                {
-                    try
-                    {
-                        DateTime when = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds((double)long.Parse(e.Data.RawMessageArray[6]));
-                        BanSystem.OnIrcBanList(e.Data.RawMessageArray[4], e.Data.RawMessageArray[5], when);
-                    }
-                    catch (Exception ex)
-                    {
-                        Program.Log("Failed to parse extended ban info: " + ex.Message);
-                    }
-                }
-#elif JTVBOT
                 BanSystem.OnIrcBanList(e.Data.RawMessageArray[4], "jtv", DateTime.UtcNow);
-#endif
             }
             else if (e.Data.ReplyCode == ReplyCode.EndOfBanList)
             {
                 BanSystem.OnIrcEndOfBanList();
             }
-#if QNETBOT
-            else if ((int)e.Data.ReplyCode == 396 /*RPL_HOSTHIDDEN*/ && State == IrcState.Cloaking)
-            {
-                State = IrcState.Retrieving;
-                client.SendMessage(SendType.Message, "Q", "CHANLEV " + Channel + " #" + desBot.State.IrcSettings.Value.QAccount);
-            }
-#endif
         }
-
-#if QNETBOT
-        static void client_OnNickChange(object sender, NickChangeEventArgs e)
-        {
-            DynamicDictionary<string, User, SerializableUser> users = desBot.State.UserList;
-            DateTime joined = DateTime.UtcNow;
-            try
-            {
-                User old = users.Lookup(e.OldNickname);
-                users.Remove(old);
-                joined = old.Joined;
-            }
-            catch (Exception ex) { }
-            users.Add(new User(e.OldNickname, new HostMask(e.OldNickname + "!" + e.Data.Ident + "@" + e.Data.Host), joined, DateTime.UtcNow));
-            try
-            {
-                User current = users.Lookup(e.NewNickname);
-                users.Remove(current);
-            }
-            catch (Exception ex) { }
-            HostMask entry = new HostMask(e.NewNickname + "!" + e.Data.Ident + "@" + e.Data.Host);
-            users.Add(new User(e.NewNickname, entry));
-            BanSystem.OnIrcEnter(entry, e.NewNickname);
-        }
-
-        static void client_OnQuit(object sender, QuitEventArgs e)
-        {
-            DynamicDictionary<string, User, SerializableUser> users = desBot.State.UserList;
-            DateTime joined = DateTime.UtcNow;
-            try
-            {
-                User old = users.Lookup(e.Who);
-                users.Remove(old);
-                joined = old.Joined;
-            }
-            catch (Exception ex) { }
-            HostMask entry =  new HostMask(e.Who + "!" + e.Data.Ident + "@" + e.Data.Host);
-            users.Add(new User(e.Who, entry, joined, DateTime.UtcNow));
-            BanSystem.OnIrcLeave(entry);
-        } 
-
-        static void client_OnKick(object sender, KickEventArgs e)
-        {
-            if (e.Whom == Nickname)
-            {
-                Disconnect("Kicked from channel");
-            }
-            else
-            {
-                DynamicDictionary<string, User, SerializableUser> users = desBot.State.UserList;
-                DateTime joined = DateTime.UtcNow;
-                try
-                {
-                    User old = users.Lookup(e.Who);
-                    users.Remove(old);
-                    joined = old.Joined;
-                }
-                catch (Exception ex) { }
-                HostMask entry = new HostMask(e.Who + "!" + e.Data.Ident + "@" + e.Data.Host);
-                users.Add(new User(e.Who, entry , joined, DateTime.UtcNow));
-                BanSystem.OnIrcLeave(entry);
-            }
-        }
-
-        static void client_OnWho(object sender, WhoEventArgs e)
-        {
-            DynamicDictionary<string, User, SerializableUser> users = desBot.State.UserList;
-            HostMask entry = new HostMask(e.WhoInfo.Nick + "!" + e.WhoInfo.Ident + "@" + e.WhoInfo.Host);
-            try
-            {
-                User old = users.Lookup(e.WhoInfo.Nick);
-                if (old != null)
-                {
-                    users.Remove(old);
-                }
-            }
-            catch (Exception ex) { }
-            users.Add(new User(e.WhoInfo.Nick, entry));
-            BanSystem.OnIrcEnter(entry, e.WhoInfo.Nick);
-        }
-#endif
 
         static void client_Listen()
         {
