@@ -35,6 +35,10 @@ namespace desBot
         static Timer quotetimer;
         static DateTime quotelast = DateTime.UtcNow;
         
+        // last stream peak viewers
+        public static int lastPeakViewers = 0;
+        public static DateTime lastStreamTime = DateTime.UtcNow;
+
         static void SetQuoteTimer()
         {
             if (quotetimer != null) quotetimer.Dispose();
@@ -226,6 +230,8 @@ namespace desBot
                                     int imins = (int)(mins - 60 * hours);
                                     string duration = hours > 0 ? hours + " hours and " : "";
                                     duration += imins + " minutes";
+                                    lastPeakViewers = max_viewers;
+                                    lastStreamTime = DateTime.UtcNow;
                                     Irc.SendChannelMessage("After " + duration + " of streaming, it appears we have reached the end :(", false);
                                 }
                                 else Irc.SendChannelMessage("The stream has ended :(", false);
@@ -411,7 +417,7 @@ namespace desBot
                 Irc.Init();
 				
                 //init done
-                Program.Log("Main thread initialisation complete");
+                Program.Log("Main thread initalization complete");
 
                 //read messages
                 while (true)
@@ -488,7 +494,7 @@ namespace desBot
             lock (State.GlobalSync)
             {
                 string readable = ControlCharacter.Serialize(text);
-                logwriter.WriteLine(DateTime.UtcNow.ToString("HH:mm:ss - ") + readable);
+                logwriter.WriteLine(DateTime.UtcNow.ToLocalTime().ToString("u") + " PST - " + readable);
             }
         }
 
