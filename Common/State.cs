@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Collections.Generic;
+
 namespace desBot
 {
     /// <summary>
@@ -203,6 +204,11 @@ namespace desBot
         public static DynamicProperty<string, string> NewSubText = new DynamicProperty<string, string>("NewSubText", String.Empty);
         public static DynamicProperty<string, string> NewSubNotifyUser = new DynamicProperty<string, string>("JTVNotifyUser", "twitchnotify");
 
+        /// <summary>
+        /// Keeps track of the last stream stats
+        /// </summary>
+        public static DynamicProperty<DateTime, DateTime> LastStreamDateTime = new DynamicProperty<DateTime, DateTime>("LastStream", DateTime.UtcNow);
+        public static DynamicProperty<int, int> LastPeakViews = new DynamicProperty<int, int>("LastPeakViewers", 0);
 
     }
 }

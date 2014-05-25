@@ -87,6 +87,9 @@ namespace desBot
         public string NewSubText = "Thanks for subscribing, %s!";
         public string NewSubNotifyUser = "twitchnotify";
 
+        // Last stream info
+        public DateTime LastStreamDateTime = DateTime.UtcNow;
+        public int LastPeakViews = 0;
     }
 
     /// <summary>
@@ -276,6 +279,10 @@ namespace desBot
                 State.NewSubText.Value = result.NewSubText;
                 State.NewSubNotifyUser.Value = result.NewSubNotifyUser;
 
+                // Last Stream Stats
+                State.LastPeakViews.Value = result.LastPeakViews;
+                State.LastStreamDateTime.Value = result.LastStreamDateTime;
+
                 //success
                 return "Applied settings: " + result.UserList.Count.ToString() + " users, " + result.BanList.Count.ToString() + " bans, " + result.AccountList.Count.ToString() + " accounts, " + result.Quotes.Count.ToString() + " quotes, " + result.Triggers.Count.ToString() + " triggers";
             }
@@ -378,6 +385,10 @@ namespace desBot
                 // New Sub text
                 settings.NewSubText = State.NewSubText.Value;
                 settings.NewSubNotifyUser = State.NewSubNotifyUser.Value;
+
+                // Last Stream Stats
+                settings.LastStreamDateTime = State.LastStreamDateTime.Value;
+                settings.LastPeakViews = State.LastPeakViews.Value;
 
                 //done
                 return settings;

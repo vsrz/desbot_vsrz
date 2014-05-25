@@ -30,14 +30,14 @@ namespace desBot
             {
                 if (viewers == 0 && embeds == 0 && total == 0)
                 {
-                    DateTime lastStream = Program.lastStreamTime;
-                    string peak = Program.lastPeakViewers.ToString();
+                    DateTime lastStream = State.LastStreamDateTime.Value;
+                    string peak = State.LastPeakViews.ToString();
                     if (peak == "0")
                     {
                         peak = "an unknown number of";
                     }
 
-                    message.ReplyAuto(stream + "' is not live. Last stream was " + lastStream.ToString("f") + " UTC with " + Program.lastPeakViewers + " peak viewers.");
+                    message.ReplyAuto(stream + " is not live. Last stream was " + lastStream.ToString("f") + " UTC with " + State.LastPeakViews.Value + " peak viewers.");
                 }
                 else
                 {

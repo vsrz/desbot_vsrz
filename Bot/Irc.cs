@@ -538,9 +538,12 @@ namespace desBot
 
         static void client_OnChannelMessage(object sender, IrcEventArgs e)
         {
-            Program.Log("channel message from " + e.Data.Nick + ": " + e.Data.Message);
-            if (BanSystem.OnIrcChannelMessage(e.Data.Nick)) return;
-            client_OnMessage(new IrcMessage(e.Data.Nick, e.Data.Message, e.Data.Channel, false));
+            if (e.Data.Nick != "jtv")
+            {
+                Program.Log("channel message from " + e.Data.Nick + ": " + e.Data.Message);
+                if (BanSystem.OnIrcChannelMessage(e.Data.Nick)) return;
+                client_OnMessage(new IrcMessage(e.Data.Nick, e.Data.Message, e.Data.Channel, false));
+            }
         }
 
         static void client_OnQueryNotice(object sender, IrcEventArgs e)
@@ -586,7 +589,8 @@ namespace desBot
             {
                 client.RfcNames(Channel);
                 State = IrcState.Ready;
-                SendRawMessage("JTVCLIENT");
+                //SendRawMessage("JTVCLIENT");
+                SendRawMessage("TWITCHCLIENT 3");
 				string botname = desBot.State.JtvSettings.Value.Nickname.ToString();
                 SendChannelMessage(botname + " is online! (v" + Token.GetCurrentVersion() + "@twitch.tv)" + (Program.IsBuggyTwitch ? "/bt" : ""), false);
             }

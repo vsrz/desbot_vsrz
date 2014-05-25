@@ -34,10 +34,6 @@ namespace desBot
         static int quoteinterval;
         static Timer quotetimer;
         static DateTime quotelast = DateTime.UtcNow;
-        
-        // last stream peak viewers
-        public static int lastPeakViewers = 0;
-        public static DateTime lastStreamTime = DateTime.UtcNow;
 
         static void SetQuoteTimer()
         {
@@ -200,6 +196,7 @@ namespace desBot
         static string prev_title = null;
         static int max_viewers = 0;
         static DateTime start_time = DateTime.UtcNow;
+
         static void OnChannelUpdated(bool live, string title, int viewers)
         {
             lock (State.GlobalSync)
@@ -230,8 +227,8 @@ namespace desBot
                                     int imins = (int)(mins - 60 * hours);
                                     string duration = hours > 0 ? hours + " hours and " : "";
                                     duration += imins + " minutes";
-                                    lastPeakViewers = max_viewers;
-                                    lastStreamTime = DateTime.UtcNow;
+                                    State.LastPeakViews.Value = max_viewers;
+                                    State.LastStreamDateTime.Value = DateTime.UtcNow;
                                     Irc.SendChannelMessage("After " + duration + " of streaming, it appears we have reached the end :(", false);
                                 }
                                 else Irc.SendChannelMessage("The stream has ended :(", false);
@@ -415,7 +412,7 @@ namespace desBot
 
                 //start IRC service
                 Irc.Init();
-				
+
                 //init done
                 Program.Log("Main thread initalization complete");
 
