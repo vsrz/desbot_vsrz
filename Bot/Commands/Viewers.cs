@@ -56,14 +56,14 @@ namespace desBot
                             chatmsg = " and " + chat.ToString() + " chatters";
 
                             //peak viewer count
-                            peak = ", peaked at " + Program.PeakViewers;
+                            peak = Program.PeakViewers + " peak";
                         }
                     }
                     
+                    // Remove the stream_count and embed_count variables, as the JTV API doesn't appear to report them properly
                     message.ReplyAuto(
-                        "Currently " + ControlCharacter.Underline() + viewers.ToString() + ControlCharacter.Underline() + " viewers ("
-                        + ControlCharacter.Underline() + embeds.ToString() + ControlCharacter.Underline() + " from embeds" + peak + ")" + chatmsg + " are tuned in to "
-                        + ControlCharacter.Underline() + stream + ControlCharacter.Underline() + ", which has a total of "
+                        "Currently " + ControlCharacter.Underline() + viewers.ToString() + ControlCharacter.Underline() + " viewers (" + peak + ")" 
+                        + chatmsg + " are tuned in to " + ControlCharacter.Underline() + stream + ControlCharacter.Underline() + ", which has a total of "
                         + ControlCharacter.Underline() + total.ToString() + ControlCharacter.Underline() + " views"
                         );
                 }
@@ -117,12 +117,12 @@ namespace desBot
                                         case "embed_count":
                                             result.embeds = int.Parse(value);
                                             break;
-                                        case "channel_view_count":
+                                        case "views_count":
                                             result.total = int.Parse(value);
                                             break;
                                         case "channel_url":
                                             // API returns the Legacy URL so replace it
-                                            value.Replace("http://justin.tv", "http://twitch.tv");
+                                            value.Replace("justin.tv", "twitch.tv");
                                             result.stream = value;
                                             break;
                                         case "title":
