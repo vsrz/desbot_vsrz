@@ -357,11 +357,7 @@ namespace desBot
 
             foreach (Nuke phrase in State.NukeList.GetItems())
             {
-                
-                // Cheeky way to match whole word only
-                if ((text.IndexOf(" " + phrase.Text.ToUpper() + " ") > -1) ||
-                    (text.StartsWith(phrase.Text.ToUpper() + " ")) ||
-                    (text.EndsWith(" " + phrase.Text.ToUpper())))
+                if (text.ToUpper().IndexOf(phrase.Text.ToUpper()) > -1)
                 {
                     return true;
                 }
