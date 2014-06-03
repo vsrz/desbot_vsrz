@@ -491,7 +491,7 @@ namespace desBot
             lock (State.GlobalSync)
             {
                 string readable = ControlCharacter.Serialize(text);
-                logwriter.WriteLine(DateTime.UtcNow.ToLocalTime().ToString("u") + " PST - " + readable);
+                logwriter.WriteLine(DateTime.UtcNow.ToLocalTime().ToString("u") + " - " + readable);
             }
         }
 
