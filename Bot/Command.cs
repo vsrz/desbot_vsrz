@@ -353,11 +353,15 @@ namespace desBot
         /// <returns></returns>
         static bool ContainsNukePhrase(string text)
         {
-            text = text.ToUpper();
+            text = " " + text.ToUpper() + " ";
 
             foreach (Nuke phrase in State.NukeList.GetItems())
             {
-                if (text.ToUpper().IndexOf(phrase.Text.ToUpper()) > -1)
+                //if (text.ToUpper().IndexOf(phrase.Text.ToUpper()) > -1)
+                // Cheeky way to match whole word only
+                if ((text.IndexOf(" " + phrase.Text.ToUpper() + " ") > -1) ||
+                    (text.StartsWith(phrase.Text.ToUpper() + " ")) ||
+                    (text.EndsWith(" " + phrase.Text.ToUpper())))
                 {
                     return true;
                 }

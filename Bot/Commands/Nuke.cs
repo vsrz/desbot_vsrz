@@ -26,6 +26,11 @@ namespace desBot
             int maxid = 0;
             foreach (Nuke needle in State.NukeList.GetItems())
             {
+                if (args == needle.Text)
+                {
+                    message.ReplyAuto("A nuke already exists on that term.");
+                    return;
+                }
                 if (needle.ID > maxid) maxid = needle.ID;
             }
             maxid++;
@@ -138,7 +143,7 @@ namespace desBot
 
                             //print Nuke
                             string text = ControlCharacter.Enabled ? Nuke.Text : ControlCharacter.Strip(Nuke.Text);
-                            reply += "Nuke " + ControlCharacter.Bold() + "#" + Nuke.ID.ToString() + ControlCharacter.Bold() + ": " + text + "\n";
+                            reply += "Nuke " + ControlCharacter.Bold() + "#" + Nuke.ID.ToString() + ControlCharacter.Bold() + ": " + text + " | ";
                             count++;
                         }
                     }
@@ -147,10 +152,10 @@ namespace desBot
                         //not found
                         message.ReplyAuto("no Nuke found containing the word(s): " + args);
                     }
-                    else if (count > 3)
+                    else if (count > 8)
                     {
                         //too many matches
-                        message.ReplyAuto("more than 3 Nukes matched your criteria, please be more exclusive in your criteria");
+                        message.ReplyAuto("more than 8 Nukes matched your criteria, please be more exclusive in your criteria");
                     }
                     else
                     {

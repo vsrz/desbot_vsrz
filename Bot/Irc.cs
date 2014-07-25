@@ -380,9 +380,9 @@ namespace desBot
             if (State != IrcState.Ready) throw new Exception("Invalid state for sending messages");
             string[] lines = text.Split(new char[] { '\n' });
             {
-                //MLM: now also split lines on 250 length when on JTV, since channel messages are truncated at that point
+                //MLM: now also split lines on 350 length when on JTV, since channel messages are truncated at that point
                 const string more = ">>";
-                const int maxlen = 250;
+                const int maxlen = 350;
                 const int minlen = 200;
 
                 //process lines
