@@ -152,7 +152,9 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy "$(ProjectDir)$(OutDir)$(TargetFileName)" "$(SolutionDir)Bin\$(ConfigurationName)" /Y /I
+    <PostBuildEvent>mkdir $(SolutionDir)Bin
+mkdir $(SolutionDir)Bin\$(ConfigurationName)
+xcopy "$(ProjectDir)$(OutDir)$(TargetFileName)" "$(SolutionDir)Bin\$(ConfigurationName)" /Y /I
 xcopy "$(ProjectDir)$(OutDir)*.dll" "$(SolutionDir)Bin\$(ConfigurationName)" /Y
 move /Y "$(SolutionDir)Bin\$(ConfigurationName)\$(TargetFileName)" "$(SolutionDir)Bin\$(ConfigurationName)\$(TargetName)_$(ConfigurationName).exe"</PostBuildEvent>
   </PropertyGroup>

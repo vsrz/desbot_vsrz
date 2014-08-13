@@ -7,7 +7,7 @@ namespace desBot
     class LimitCommand : Command
     {
         //per-user configured rate limiter for command acceptance
-        public static RateLimiter UserLimiter = new RateLimiter(TimeSpan.FromSeconds(10.0), TimeSpan.FromSeconds(60.0));
+        public static RateLimiter UserLimiter = new RateLimiter(TimeSpan.FromSeconds(1.0), TimeSpan.FromSeconds(10.0));
 
         public static void AutoRegister()
         {
@@ -65,7 +65,7 @@ namespace desBot
             {
                 RateLimiterConfiguration config = new RateLimiterConfiguration();
                 config.sub = double.Parse(elem[1]);
-                config.nor = double.Parse(elem[2]);
+                config.nor = double.Parse(elem[2]); 
                 limiter.Configuration = config;
                 message.ReplyAuto("Limit for " + elem[0] + " has been set to once every " + config.sub.ToString() + "s for subscribers and " + config.nor.ToString() + "s for other users");
             }

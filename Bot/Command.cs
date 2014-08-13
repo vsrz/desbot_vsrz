@@ -48,7 +48,7 @@ namespace desBot
         /// <summary>
         /// The rate limiter that is applied to the commands
         /// </summary>
-        public RateLimiter Limiter = new RateLimiter(TimeSpan.FromSeconds(30.0), TimeSpan.FromSeconds(90.0));
+        public RateLimiter Limiter = new RateLimiter(TimeSpan.FromSeconds(1.0), TimeSpan.FromSeconds(10.0));
 
         /// <summary>
         /// Gets the keyword of the command

@@ -219,6 +219,32 @@ namespace desBot
         }
     }
 
+    class NukePurgeCommand : SubCommand
+    {
+        public NukePurgeCommand(CommandGroup group) : base(group)
+        {
+            Privilege = PrivilegeLevel.Operator;
+        }
+
+        public override string GetKeyword()
+        {
+            return "purge";
+        }
+
+        public override string GetHelpText(PrivilegeLevel current, string more)
+        {
+            return " Removes all nukes in the nuke list.";
+        }
+
+        public override void Execute(IrcMessage message, string args)
+        {
+            foreach (Nuke needle in State.NukeList.GetItems())
+            {
+                State.NukeList.Remove(needle);
+            }
+            message.ReplyAuto("All nukes have been removed.");
+        }
+    }
     class NukeTimeCommand : SubCommand
     {
         public NukeTimeCommand(CommandGroup group) : base(group)
@@ -273,6 +299,7 @@ namespace desBot
             new NukeInfoCommand(this);
             new NukeFindCommand(this);
             new NukeTimeCommand(this);
+            new NukePurgeCommand(this);
         }
         
         public override string GetKeyword()
