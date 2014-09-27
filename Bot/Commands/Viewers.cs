@@ -37,7 +37,7 @@ namespace desBot
                         peak = "an unknown number of";
                     }
 
-                    message.ReplyAuto(stream + " is not live. Last stream was " + lastStream.ToString("f") + " UTC with " + State.LastPeakViews.Value + " peak viewers.");
+                    message.ReplyAuto("Channel is not live. Last stream was " + lastStream.ToString("f") + " UTC with " + State.LastPeakViews.Value + " peak viewers.");
                 }
                 else
                 {
@@ -86,52 +86,69 @@ namespace desBot
                 new Thread(new ThreadStart(Thread)).Start();
             }
 
+            static string Unescape(string str)
+            {
+                string result = "";
+                int start = -1;
+                while (true)
+                {
+                    int stop = str.IndexOf('\\', start + 1);
+                    if (stop == -1)
+                    {
+                        result += str.Substring(start + 1);
+                        return result;
+                    }
+                    result += str.Substring(start + 1, stop - start - 1);
+                    start = stop;
+                }
+            }
+
+            static string Parse(string json, string field)
+            {
+                //JSON "parser", just look for first  entry of "text":"whatever"
+                var needle = "\"" + field + "\":";
+                int pos = json.IndexOf(needle);
+                if(pos < 0) return "";
+                int start = pos + needle.Length;
+                for (int i = start; ; )
+                {
+                    int end = json.IndexOf('"', i);
+                    if (end < 0) return "";
+                    if (json[end - 1] == '\\')
+                    {
+                        i = end + 1;
+
+                    }
+                    else if (end == start)
+                    {
+                        return "";
+                    }
+                    else
+                    {
+                        return Unescape(json.Substring(start, end - start - 1));
+                    }
+                }
+
+            }
+
             void Thread()
             {
                 try
                 {
                     if (!silent)
                     {
-                        Program.Log("Retrieving JTV XML using API: " + request.RequestUri);
+                        Program.Log("Retrieving Twitch JSON using API: " + request.RequestUri);
                     }
                     using (WebResponse response = request.GetResponse())
                     {
                         string title = null;
                         Cache result = new Cache();
-                        XmlReader reader = new XmlTextReader(response.GetResponseStream());
-                        reader.MoveToContent();
-                        while (reader.Read())
-                        {
-                            if (reader.NodeType == XmlNodeType.Element)
-                            {
-                                string name = reader.Name;
-                                reader.Read();
-                                if(reader.NodeType == XmlNodeType.Text)
-                                {
-                                    string value = reader.Value;
-                                    switch (name)
-                                    {
-                                        case "channel_count":
-                                            result.viewers = int.Parse(value);
-                                            break;
-                                        case "embed_count":
-                                            result.embeds = int.Parse(value);
-                                            break;
-                                        case "views_count":
-                                            result.total = int.Parse(value);
-                                            break;
-                                        case "channel_url":
-                                            // API returns the Legacy URL so replace it
-                                            value.Replace("justin.tv", "twitch.tv");
-                                            result.stream = value;
-                                            break;
-                                        case "title":
-                                            if(title == null) title = value;
-                                            break;
-                                    }
-                                }
-                            }
-                        }
+                        var json = new StreamReader(response.GetResponseStream()).ReadToEnd();
+                        int.TryParse(Parse(json, "viewers"), out result.viewers);
+                        result.embeds = 0;
+                        int.TryParse(Parse(json, "views"), out result.total);
+                        result.stream = Parse(json, "url");
+                        title = Parse(json, "status");
                         
                         if(result.stream == null) result.stream = stream;
                         result.retrieved = DateTime.UtcNow;
@@ -142,7 +159,7 @@ namespace desBot
                         }
                         else
                         {
-                            Program.Log("Viewer statistics: " + result.viewers + " viewers (" + Program.PeakViewers + " peak), " + result.embeds + " embeds, " + result.total + " total views, title = " + title);
+                            Program.Log("Viewer statistics: " + result.viewers + " viewers (" + Program.PeakViewers + " peak), " + result.total + " total views, title = " + title);
                         }
                         if (stream == DefaultChannel && OnDefaultChannelUpdated != null)
                         {
@@ -155,7 +172,7 @@ namespace desBot
                     Program.Log("Failed to retrieve viewer count: " + ex.Message);
                     if (!silent)
                     {
-                        message.ReplyAuto("The stream at " + request.RequestUri + " appears to be down :(");
+                        message.ReplyAuto("The stream " + "" +  "appears to be offline");
                     }
                     try
                     {
@@ -197,7 +214,7 @@ namespace desBot
                     silent = true;
                 }
                 string stream = args.Length == 0 ? DefaultChannel : args;
-                string uri = "http://api.justin.tv/api/stream/list.xml?channel=" + stream;
+                string uri = "https://api.twitch.tv/kraken/streams/" + stream;
                 if (Uri.IsWellFormedUriString(uri, UriKind.Absolute))
                 {
                     if (cache.ContainsKey(stream))
