@@ -377,6 +377,13 @@ namespace desBot
         /// <param name="text">The text of the message</param>
         public static void SendChannelMessage(string text, bool immediately)
         {
+            // First check global limiting
+            if (!BotLimiter.CanSendMessage())
+            {
+                Program.Log("Cannot send message due to global limiting " + BotLimiter.GetMessageCount().ToString() + " messages sent in " + BotLimiter.INTERVAL + " seconds"); 
+                return;
+            }
+
             if (State != IrcState.Ready) throw new Exception("Invalid state for sending messages");
             string[] lines = text.Split(new char[] { '\n' });
             {
@@ -423,6 +430,7 @@ namespace desBot
                 string compat = !HasControlSupport(true) ? ControlCharacter.Strip(line) : line;
                 client.SendMessage(SendType.Message, Channel, compat, immediately ? Priority.High : Priority.Medium);
                 Program.Log("sending to channel: " + compat);
+                BotLimiter.AddMessage();
             }
             
         }

@@ -63,6 +63,7 @@
   <ItemGroup>
     <Compile Include="Alice.cs" />
     <Compile Include="BanSystem.cs" />
+    <Compile Include="BotLimiter.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="CommandGroup.cs" />
     <Compile Include="Commands\Ad.cs" />

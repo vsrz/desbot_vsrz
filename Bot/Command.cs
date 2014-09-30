@@ -668,7 +668,7 @@ namespace desBot
             }
             return false;
         }
-
+        
         /// <summary>
         /// Handle a command
         /// </summary>
@@ -740,28 +740,6 @@ namespace desBot
             //check for privilege level
             PrivilegeLevel level = GetPrivilegeLevel(message.From);
             if (level < command.Privilege) return false;
-
-            //check for rate-limiting
-            User lookup = State.UserList.Lookup(message.From);
-            if (lookup != null)
-            {
-                //update configuration
-                lookup.Meta.Limiter.Configuration = LimitCommand.UserLimiter.Configuration;
-                if (!lookup.Meta.Limiter.AttemptOperation(level))
-                {
-                    Program.Log("Command ignored due to per-user limiting: '" + message.Text + "' from " + message.From);
-                    return true;
-                }
-            }
-            else
-            {
-                //unknown user, use shared timer instead
-                if (!LimitCommand.UserLimiter.AttemptOperation(level))
-                {
-                    Program.Log("Command ignored due to shared limiting: '" + message.Text + "' from " + message.From);
-                    return true;
-                }
-            }
             
             //execute command
             try
@@ -770,7 +748,8 @@ namespace desBot
             }
             catch (Exception ex)
             {
-                message.ReplyAuto("Error: " + ex.Message);
+                // Change this to a log error instead
+                Program.Log("Error: " + ex.Message);
             }
 
             //this was a command

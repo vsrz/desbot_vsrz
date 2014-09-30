@@ -295,6 +295,15 @@ namespace desBot
         }
 
         /// <summary>
+        /// Global bot limiter
+        /// </summary>
+        static Timer BotLimiterTimer;
+        static void BotLimiterTick(object obj)
+        {
+            BotLimiter.Tick();
+        }
+
+        /// <summary>
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
@@ -305,7 +314,7 @@ namespace desBot
                 //print versions
                 Log("Running desBot v" + Assembly.GetExecutingAssembly().GetName().Version.ToString() + " for " + (IsJTV ? "Twitch TV" : "QuakeNet"));
                 Log("Using SmartIRC4Net library v" + Assembly.GetAssembly(typeof(Meebey.SmartIrc4net.IrcClient)).GetName().Version.ToString());
-
+                
                 //parse commandline
                 foreach (string arg in args)
                 {
@@ -410,6 +419,9 @@ namespace desBot
                 //handle subscriber events
                 Irc.OnMessage += new Irc.MessageEventHandler(JTV.HandleMessage);
 
+                // Tick the BotLimiter
+                BotLimiterTimer = new Timer(new TimerCallback(BotLimiterTick), null, 6000, 6000);
+                
                 //start IRC service
                 Irc.Init();
 
