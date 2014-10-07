@@ -14,23 +14,27 @@ namespace desBot
         private static Queue<int> Totals;
 
         // Maximum number of messages per interval
-        public const int MAX_MESSAGES_PER_INTERVAL = 15;
+        public const int MAX_MESSAGES_PER_INTERVAL = 50;
 
         // Interval, in seconds
         public const int INTERVAL = 30;
 
+        // This keeps the amount of messages sent during the current time interval
+        private static int MessagesThisTick;
+
         // Last Tick
         private static DateTime LastTick;
 
-        private static bool firstRun = false;
+        private static bool IsInitalized = false;
 
         private static void init()
         {
-            if (firstRun == false)
+            if (IsInitalized == false)
             {
                 Totals = new Queue<int>();
                 LastTick = DateTime.UtcNow;
-                firstRun = true;
+                MessagesThisTick = 0;
+                IsInitalized = true;
             }
 
         }
@@ -39,7 +43,7 @@ namespace desBot
         // INTERVAL items in the queue
         public static void Tick()
         {
-            if (!firstRun) init();
+            if (!IsInitalized) init();
         
             if (DateTime.UtcNow > LastTick.AddSeconds(1))
             {
@@ -50,7 +54,8 @@ namespace desBot
                     Totals.Dequeue();
                 }
 
-                Totals.Enqueue(0);
+                Totals.Enqueue(MessagesThisTick);
+                MessagesThisTick = 0;
 
             }
 
@@ -58,14 +63,13 @@ namespace desBot
 
         public static void AddMessage(int count = 1)
         {
-            int last = Totals.Last();
-            last += count;
-            Totals.Enqueue(last);
+            if (!IsInitalized) init();
+            MessagesThisTick += count;
         }
 
         public static int GetMessageCount()
         {
-            if (!firstRun) init();
+            if (!IsInitalized) init();
 
             if (Totals.Count() == 0) return 0;
             int[] list = new int[Totals.Count()];
@@ -75,7 +79,7 @@ namespace desBot
             {
                 cnt += list[i];
             }
-            return cnt;
+            return cnt + MessagesThisTick;
         }
 
         public static bool CanSendMessage()
