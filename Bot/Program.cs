@@ -146,6 +146,19 @@ namespace desBot
             return true;
         }
 
+        public static bool TriggerExists(string name)
+        {
+            foreach (Trigger trigger in State.TriggerList.GetItems())
+            {
+                if (trigger.Keyword.ToLower() == name.ToLower())
+                {
+                    return true;
+                }
+            }
+            return false;
+
+        }
+
         static void OnCleanupTimer(object ignored)
         {
             lock (State.GlobalSync)

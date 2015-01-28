@@ -66,6 +66,7 @@
     <Compile Include="BotLimiter.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="CommandGroup.cs" />
+    <Compile Include="Commands\Advert.cs" />
     <Compile Include="Commands\Ad.cs" />
     <Compile Include="Commands\BanList.cs" />
     <Compile Include="Commands\Clear.cs" />

@@ -69,6 +69,9 @@ namespace desBot
         //limiters
         public List<RateLimiterConfiguration> LimiterList = new List<RateLimiterConfiguration>();
 
+        // Advertising 2.0
+        public List<string> AdvertList = new List<string>();
+
         //twitter config
         public int TwitterInterval = 15;
         public bool TwitterEnabled = false;
@@ -265,6 +268,10 @@ namespace desBot
                 State.TwitterEnabled.Value = result.TwitterEnabled;
                 State.TwitterAccount.Value = result.TwitterAccount;
 
+                // Adverttising 2.0
+                List<string> adverts = DeserializeList(result.AdvertList, new DummySerializer<string>());
+                State.AdvertList.Add(adverts);
+
                 // Advertising
                 State.AdInterval.Value = result.AdInterval;
                 State.AdEnabled.Value = result.AdEnabled;
@@ -377,6 +384,9 @@ namespace desBot
                 settings.AdInterval = State.AdInterval.Value;
                 settings.AdText = State.AdText.Value;
                 settings.AdEnabled = State.AdEnabled.Value;
+
+                // Advertising 2.0
+                settings.AdvertList = SerializeList(State.AdvertList.GetItems(), new DummySerializer<string>());
 
                 // Nukes
                 settings.Nukes = SerializeList(State.NukeList.GetItems(), new NukeSerializer());

@@ -184,6 +184,11 @@ namespace desBot
         public static DynamicProperty<bool, bool> AdEnabled = new DynamicProperty<bool, bool>("AdEnabled", false);
 
         /// <summary>
+        /// Advert 2.0
+        /// </summary>
+        public static DynamicList<string, string> AdvertList = new DynamicList<string, string>();
+
+        /// <summary>
         /// Advert text
         /// </summary>
         public static DynamicProperty<string, string> AdText = new DynamicProperty<string, string>("AdText", String.Empty);
