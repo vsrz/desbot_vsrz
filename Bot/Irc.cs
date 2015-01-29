@@ -389,8 +389,8 @@ namespace desBot
             {
                 //MLM: now also split lines on 350 length when on JTV, since channel messages are truncated at that point
                 const string more = ">>";
-                const int maxlen = 350;
-                const int minlen = 200;
+                const int maxlen = 1000;
+                const int minlen = 500;
 
                 //process lines
                 List<string> lines2 = new List<string>();
@@ -428,6 +428,7 @@ namespace desBot
             foreach (string line in lines)
             {
                 string compat = !HasControlSupport(true) ? ControlCharacter.Strip(line) : line;
+                immediately = true;
                 client.SendMessage(SendType.Message, Channel, compat, immediately ? Priority.High : Priority.Medium);
                 Program.Log("sending to channel: " + compat);
                 BotLimiter.AddMessage();
