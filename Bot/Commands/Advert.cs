@@ -70,20 +70,22 @@ namespace desBot
             {
                 LastAd = 0;
                 SendAdToChannel(LastAd);
+                return;
             }
            
-            CurrentAd = LastAd;
+            CurrentAd = LastAd + 1;
             // Get the next trigger from the list, save it for later            
-            for (int x = 1; x <= TotalAds; x++)
+            for (int x = 0; x < TotalAds; x++)
             {
-                CurrentAd += x;
-                if (CurrentAd > TotalAds)
+                if (CurrentAd + x >= TotalAds)
                 {
                     CurrentAd = 0;
-                }
-                if (!SendAdToChannel(CurrentAd))
+                } 
+                CurrentAd += x;
+                if (SendAdToChannel(CurrentAd))
                 {
-                    continue;
+                    LastAd = CurrentAd;
+                    return;
                 }
                 
             } 
@@ -361,14 +363,17 @@ namespace desBot
                         break;
                     case "call":
                         PlayAd();
+                        response = "";
                         break;
                     default:
                         break;
 
                 }
             }
-            message.ReplyAuto(response);
-            
+            if (response != "")
+            {
+                message.ReplyAuto(response);
+            }
         }
         
     
