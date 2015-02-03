@@ -1,4 +1,6 @@
-﻿using System;
+﻿// This class has been deprecated for the Advert class
+/////////////////////////////////////////////////////////
+using System;
 using System.Net;
 using System.Globalization;
 namespace desBot
@@ -10,7 +12,9 @@ namespace desBot
     {
         public static void AutoRegister()
         {
-            new AdCommand();
+            
+            // Ad system is now called via !advert
+            //new AdCommand();
         }
 
         AdCommand()
@@ -126,7 +130,7 @@ namespace desBot
         static void SendAd()
         {            
             lastrepeat = DateTime.UtcNow;
-            Irc.SendChannelMessage(State.AdText.Value, false);
+            //Irc.SendChannelMessage(State.AdText.Value, false);
         }
 
         //execute command

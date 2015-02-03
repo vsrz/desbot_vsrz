@@ -8,10 +8,10 @@ namespace desBot
     {
         // Keyword to call this command
         protected const string Keyword = "advert";
-        protected const string HelpText = "[key] [value]: Keys are add, delete, clear, list, and interval. Use key by itself for help.";
+        protected const string HelpText = "[key] [value]: Keys are add, delete, clear, list, interval, enable, and disable. Use !advert help key for more information.";
         
         // Minimum number of minutes that advertisements may be played
-        protected const int MinimumAdInterval = 3;
+        protected const int MinimumAdInterval = 5;
 
         public static void AutoRegister()
         {
@@ -32,22 +32,77 @@ namespace desBot
         {
             return " " + AdvertCommand.HelpText;
         }
-        
+
+        private static int LastAd = -1;
+       
+        private static bool SendAdToChannel(int TriggerIndex)
+        {
+            string text = Program.GetTriggerText(State.AdvertList[TriggerIndex]);
+            if (text == "")
+            {
+                Delete(State.AdvertList[TriggerIndex].ToString());
+                return false;
+            }
+            else
+            {
+                Irc.SendChannelMessage(text, false);
+                return true;
+            }
+        }
+
         /// <summary>
         /// Plays the next ad in the ad-list and advances the counter
         /// </summary>
         public static void PlayAd()
         {
-            // Get the next trigger from the list, save it for later
-            // Check that the trigger exists
-            // If it does not exist, advance to the next trigger
-            // If the next trigger is the original trigger, abort and turn off ads
-            // Otherwise, play the trigger
-            // Reset the timer
-            throw new NotImplementedException();
+            int TotalAds = State.AdvertList.GetCount();
+            int CurrentAd;
+
+            // Do not run an ad if there are none
+            if (TotalAds == 0)
+            {
+                return;
+            }
+
+            // If this is the first call, set the last ad index and play the first ad
+            // also if there is only 1 ad, continue to repeat it
+            if (LastAd == -1 || TotalAds == 1)
+            {
+                LastAd = 0;
+                SendAdToChannel(LastAd);
+            }
+           
+            CurrentAd = LastAd;
+            // Get the next trigger from the list, save it for later            
+            for (int x = 1; x <= TotalAds; x++)
+            {
+                CurrentAd += x;
+                if (CurrentAd > TotalAds)
+                {
+                    CurrentAd = 0;
+                }
+                if (!SendAdToChannel(CurrentAd))
+                {
+                    continue;
+                }
+                
+            } 
         }
         
-        private bool ExistsInAdvertList(string TriggerName)
+        public static string DisableAds()
+        {
+            State.AdEnabled.Value = false;
+            return "Ads have been disabled";
+        }
+
+        public static string EnableAds()
+        {
+            State.AdEnabled.Value = true;
+            return "Ads have been enabled";
+        }
+
+
+        private static bool ExistsInAdvertList(string TriggerName)
         {
            // Can't use anything fancy here since we need to support .net 2.0
             foreach (string trigger in State.AdvertList.GetItems())
@@ -61,11 +116,94 @@ namespace desBot
         }
 
         /// <summary>
+        /// Lists ads in the list
+        /// </summary>
+        /// <returns></returns>
+        private static string ListAds()
+        {
+            string msg = "Current ads are: ";
+            foreach (string trigger in State.AdvertList.GetItems())
+            {
+                msg += trigger + " ";
+            }
+            return msg;
+        }
+
+        /// <summary>
+        /// Remove a trigger from the ad list
+        /// </summary>
+        /// <param name="TriggerName"></param>
+        /// <returns></returns>
+        private static string Delete(string TriggerName)
+        {
+            if (Program.TriggerExists(TriggerName))
+            {
+                State.AdvertList.Remove(TriggerName);
+            }
+            return "Successfully removed " + TriggerName + " from the ad list.";
+        }
+
+        /// <summary>
+        /// Clears all the advertisements
+        /// </summary>
+        /// <returns></returns>
+        private static string ClearList()
+        {
+            DynamicList<string, string> emptyList = new DynamicList<string, string> { };
+            State.AdvertList = emptyList;
+            return "The ad list has been cleared.";
+        }
+
+        /// <summary>
+        /// Sets the interval where an ad will play, in minutes
+        /// </summary>
+        /// <param name="Minutes"></param>
+        /// <returns></returns>
+        private static string SetInterval(string Minutes)
+        {
+            int min = 0;
+            
+            if (int.TryParse(Minutes, out min))
+            {
+               if (min < MinimumAdInterval && min != 0)
+               {
+                   return "Minutes must be a number " + MinimumAdInterval + " or greater.";
+               }
+            } else {
+                return "Minutes must be a number " + MinimumAdInterval + " or greater.";
+            }
+
+            if (min == 0) 
+            {
+                State.AdInterval.Value = 0;
+                return "Ads have been disabled";
+            }
+            State.AdInterval.Value = min;
+            return "The ad interval has been set to " + min + " minutes.";
+        }
+
+        protected static DateTime lastrepeat = DateTime.MinValue;
+        /// <summary>
+        /// Check to see if the ad timer has expired
+        /// </summary>
+        public static void CheckAd()
+        {
+            /* Check if ads are enabled */
+            if (State.AdEnabled.Value)
+            {
+                /* Check if the time has expired */
+                if ((DateTime.UtcNow - lastrepeat).TotalMinutes >= State.AdInterval.Value)
+                {
+                    PlayAd();
+                }
+            }
+        }
+        /// <summary>
         /// Adds a trigger to the advertising list
         /// </summary>
         /// <param name="TriggerName"></param>
         /// <returns></returns>
-        private string Add(string TriggerName)
+        private static string Add(string TriggerName)
         {
 
             if (!Program.TriggerExists(TriggerName))
@@ -83,9 +221,34 @@ namespace desBot
          
         }
 
-        protected string AddHelp()
+        protected static string AddHelp()
         {
-            return "Usage: !" + AdvertCommand.Keyword + " add <trigger>";
+            return "Adds a trigger to the ad list. Usage: !" + AdvertCommand.Keyword + " add [trigger]";
+        }
+
+        private static string DeleteHelp()
+        {
+            return "Deletes a trigger from the ad list. Usage: !" + AdvertCommand.Keyword + " delete [trigger]";
+        }
+
+        private static string ClearHelp()
+        {
+            return "Clears all of the advertisements. Usage: !" + AdvertCommand.Keyword + " clear";
+        }
+
+        private static string IntervalHelp()
+        {
+            return "Sets the interval that an ad is displayed or 0 to disable. Usage: !" + AdvertCommand.Keyword + " interval [minutes]";
+        }
+
+        private static string ListHelp()
+        {
+            return "Lists the triggers in the current ad list. Usage: !" + AdvertCommand.Keyword + " list";
+        }
+
+        private static string EnableHelp()
+        {
+            return "Enable or disable ads entirely. Usage: !" + AdvertCommand.Keyword + " enable or !" + AdvertCommand.Keyword + " disable";
         }
 
         public override void Execute(IrcMessage message, string args)
@@ -96,7 +259,7 @@ namespace desBot
             string[] words = args.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             string response = "Usage: !" + AdvertCommand.Keyword + " " + HelpText;
             
-            if (words.Length > 1) 
+            if (words.Length > 0) 
             {
                 // Determine which command was called and call the appropriate method
                 switch (words[0])
@@ -112,16 +275,23 @@ namespace desBot
                                 case "delete":
                                 case "del":
                                 case "rem":
-                                    throw new NotImplementedException();
+                                    response = IntervalHelp();
                                     break;
                                 case "clear":
                                 case "deleteall":
                                 case "purge":
-                                    throw new NotImplementedException();
+                                    response = ClearHelp();
                                     break;
                                 case "interval":
                                 case "timer":
-                                    throw new NotImplementedException();
+                                    response = IntervalHelp();
+                                    break;
+                                case "list":
+                                    response = ListHelp();
+                                    break;
+                                case "disable":
+                                case "enable":
+                                    response = EnableHelp();
                                     break;
                                 default:
                                     // The default help text is returned in this case
@@ -145,15 +315,52 @@ namespace desBot
                     case "del":
                     case "rem":
                         // Remove or delete a trigger
+                        if (words.Length > 1)
+                        {
+                            response = Delete(words[1]);
+                        }
+                        else
+                        {
+                            response = DeleteHelp();
+                        }
                         break;
                     case "clear":
                     case "deleteall":
                     case "purge":
                         // Remove all triggers
+                       response = ClearList();
                         break;
                     case "interval":
                     case "timer":
                         // Set or review the cooldown timer
+                        if (words.Length > 1)
+                        {
+                            response = SetInterval(words[1]);
+                        }
+                        else
+                        {
+                            response = IntervalHelp();
+                        }
+                        
+                        break;
+                    case "enabled":
+                    case "on":
+                    case "start":
+                    case "enable":
+                        response = EnableAds();
+                        break;
+                    case "disable":
+                    case "disabled":
+                    case "off":
+                    case "stop":
+                        response = DisableAds();
+                        break;
+                    case "list":
+                    case "show":
+                        response = ListAds();
+                        break;
+                    case "call":
+                        PlayAd();
                         break;
                     default:
                         break;

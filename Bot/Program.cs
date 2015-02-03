@@ -68,7 +68,7 @@ namespace desBot
             if (stream_is_live)
             {
                 TwitterCommand.CheckRecent();
-                AdCommand.CheckAd();
+                AdvertCommand.CheckAd();
             }
             Save();
         }
@@ -156,6 +156,19 @@ namespace desBot
                 }
             }
             return false;
+
+        }
+
+        public static string GetTriggerText(string name)
+        {
+            foreach (Trigger trigger in State.TriggerList.GetItems())
+            {
+                if (trigger.Keyword.ToLower() == name.ToLower())
+                {
+                    return trigger.Text;
+                }
+            }
+            return "";
 
         }
 
