@@ -33,8 +33,8 @@ namespace desBot
             User user = State.UserList.Lookup(message.From);
             if (user == null) throw new Exception("User not known");
             bool enabled;
-            if(args.ToLower() == "on") enabled = true;
-            else if(args.ToLower() == "off") enabled = false;
+            if (args.ToLower() == "on") enabled = true;
+            else if (args.ToLower() == "off") enabled = false;
             else throw new Exception("Argument expected: on or off");
             user.Meta.Elevation = enabled;
             State.MetaUserList.MarkChanged(user.Meta);

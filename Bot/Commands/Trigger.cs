@@ -61,7 +61,7 @@ namespace desBot
 
         public override string GetHelpText(PrivilegeLevel current, string more)
         {
-            return " (add <keyword> <text>)|(del <keyword>): Adds or removes a custom trigger";
+            return " (add [keyword] [text])|(del [keyword]): Adds or removes a custom trigger";
         }
 
         public override void Execute(IrcMessage message, string args)
@@ -149,6 +149,7 @@ namespace desBot
 				{
 					if (needle.Protect)
 					{
+                        Irc.SendChannelMessage("Unable to remove protected trigger " + keyword + ".", false);
 						throw new Exception("Unable to remove protected trigger '" + keyword + "'");
 					}
 				}

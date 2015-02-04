@@ -200,7 +200,7 @@ namespace desBot
 
         public override string GetHelpText(PrivilegeLevel current, string more)
         {
-            return " [<JTV or Twitch stream>]: Outputs viewer statistics for a stream. Default stream is '" + DefaultChannel + "'.";
+            return " [Twitch Stream] Outputs viewer statistics for a stream. Default stream is '" + DefaultChannel + "'.";
         }
 
         public override void Execute(IrcMessage message, string args)

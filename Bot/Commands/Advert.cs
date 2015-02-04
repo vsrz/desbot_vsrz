@@ -55,6 +55,8 @@ namespace desBot
         /// </summary>
         public static void PlayAd()
         {
+            lastrepeat = DateTime.Now; 
+            Cleanup();
             int TotalAds = State.AdvertList.GetCount();
             int CurrentAd;
 
@@ -89,6 +91,29 @@ namespace desBot
                 }
                 
             } 
+        }
+
+        /// <summary>
+        /// Cleans up any ads that are stale
+        /// </summary>
+        private static void Cleanup()
+        {
+            try
+            {
+
+                foreach (string trigger in State.AdvertList.GetItems())
+                {
+                    if (!Program.TriggerExists(trigger))
+                    {
+                        Delete(trigger);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Program.Log("Error in Cleanup(): " + ex.ToString());
+            }
+            
         }
         
         public static string DisableAds()
@@ -138,10 +163,15 @@ namespace desBot
         /// <returns></returns>
         private static string Delete(string TriggerName)
         {
-            if (Program.TriggerExists(TriggerName))
+            try 
             {
                 State.AdvertList.Remove(TriggerName);
             }
+            catch (Exception ex)
+            {
+                Program.Log("Error in Advert.Delete(): " + ex.ToString());
+            }
+            
             return "Successfully removed " + TriggerName + " from the ad list.";
         }
 
@@ -197,6 +227,7 @@ namespace desBot
                 if ((DateTime.UtcNow - lastrepeat).TotalMinutes >= State.AdInterval.Value)
                 {
                     PlayAd();
+                    
                 }
             }
         }
@@ -277,7 +308,7 @@ namespace desBot
                                 case "delete":
                                 case "del":
                                 case "rem":
-                                    response = IntervalHelp();
+                                    response = DeleteHelp();
                                     break;
                                 case "clear":
                                 case "deleteall":
