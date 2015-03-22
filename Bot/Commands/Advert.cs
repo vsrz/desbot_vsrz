@@ -241,16 +241,16 @@ namespace desBot
 
             if (!Program.TriggerExists(TriggerName))
             {
-                return "Could not find a trigger '" + TriggerName + "'";
+                return "";
             }
 
             if (ExistsInAdvertList(TriggerName))
             {
-                return "The trigger '" + TriggerName + "' already exists in the ad list.";
+                return "";
             }
 
             State.AdvertList.Add(TriggerName);
-            return "Successfully added " + TriggerName + " to the ad list";
+            return "TriggerName";
          
         }
 
@@ -336,7 +336,19 @@ namespace desBot
                         // Add a trigger, as long as they specified one
                         if (words.Length > 1)
                         {
-                            response = Add(words[1]);
+                            string success = "";
+                            for (int i = 1; i < words.Length; i++)
+                            {
+                                success += Add(words[i]);
+                            }
+                            if (success.Length > 0) 
+                            {
+                                response = "Advertisements were successfully updated";
+                            }
+                            else
+                            {
+                                response = "Failed to update the advertisements.";
+                            }
                         }
                         else
                         {
