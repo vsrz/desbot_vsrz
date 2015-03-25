@@ -23,7 +23,8 @@ namespace desBot
         HelpCommand()
         {
             //Privilege = PrivilegeLevel.OnChannel;
-            Privilege = PrivilegeLevel.Operator;
+            // Apparently can't trust the idiot mods (pro-gamers)
+            Privilege = PrivilegeLevel.Developer;
         }
 
         public override string GetKeyword()
