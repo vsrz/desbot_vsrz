@@ -17,7 +17,7 @@ namespace desBot
         public const int MAX_MESSAGES_PER_INTERVAL = 50;
 
         // Interval, in seconds
-        public const int INTERVAL = 30;
+        public const int INTERVAL = 10;
 
         // This keeps the amount of messages sent during the current time interval
         private static int MessagesThisTick;

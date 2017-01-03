@@ -133,6 +133,9 @@ namespace desBot
 
             void Thread()
             {
+                // Lazy hard code. API currently broken
+                // See: https://github.com/vsrz/desbot_vsrz/issues/21
+                return;
                 try
                 {
                     if (!silent)

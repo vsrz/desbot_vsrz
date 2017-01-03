@@ -284,9 +284,10 @@ namespace desBot
                     CheckViewerThreshold(viewers, ref max_viewers, 750);
                     CheckViewerThreshold(viewers, ref max_viewers, 500);
                     CheckViewerThreshold(viewers, ref max_viewers, 250);
-
+                     
                     //update max if none of the thresholds is hit
                     if (viewers > max_viewers) max_viewers = viewers;
+                    
                 }
                 else
                 {

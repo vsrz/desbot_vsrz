@@ -388,9 +388,10 @@ namespace desBot
             string[] lines = text.Split(new char[] { '\n' });
             {
                 //MLM: now also split lines on 350 length when on JTV, since channel messages are truncated at that point
+                // JV: apparently it's 500
                 const string more = ">>";
-                const int maxlen = 1000;
-                const int minlen = 500;
+                const int maxlen = 500;
+                const int minlen = 350;
 
                 //process lines
                 List<string> lines2 = new List<string>();
