@@ -447,7 +447,7 @@ namespace desBot
                 Irc.OnMessage += new Irc.MessageEventHandler(JTV.HandleMessage);
 
                 // Tick the BotLimiter
-                BotLimiterTimer = new Timer(new TimerCallback(BotLimiterTick), null, 6000, 6000);
+                // BotLimiterTimer = new Timer(new TimerCallback(BotLimiterTick), null, 6000, 6000);
                 
                 //start IRC service
                 Irc.Init();

@@ -601,6 +601,7 @@ namespace desBot
                 State = IrcState.Ready;
                 //SendRawMessage("JTVCLIENT");
                 SendRawMessage("TWITCHCLIENT 3");
+                SendRawMessage("CAP REQ :twitch.tv/membership");
 				string botname = desBot.State.JtvSettings.Value.Nickname.ToString();
                 SendChannelMessage(botname + " is online! (v" + Token.GetCurrentVersion() + "@twitch.tv)" + (Program.IsBuggyTwitch ? "/bt" : ""), false);
             }
