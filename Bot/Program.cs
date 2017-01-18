@@ -65,11 +65,11 @@ namespace desBot
         static void OnSaveTimer(object ignored)
         {
             Alice.Tick(null);
-            if (stream_is_live)
-            {
-                TwitterCommand.CheckRecent();
-                AdvertCommand.CheckAd();
-            }
+            
+            // Live not working, just check, even if the channel is offline
+            TwitterCommand.CheckRecent();
+            AdvertCommand.CheckAd();
+
             Save();
         }
 
